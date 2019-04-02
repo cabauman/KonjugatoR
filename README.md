@@ -27,3 +27,37 @@
     * Merge syllable without badchim with stand-alone consonant: 거 + ㅂ -> 겁
 
 > 들으실 겁니다
+
+## Terminology
+
+#### Tenses
+
+* Remote Past e.g. 했었다
+* Probable Past e.g. 했을 것이다
+* Past e.g. 했다
+* Present e.g. 한다
+* Probable Future e.g. 할 것이다
+* Intentional Future e.g. 하겠다
+
+#### Speech Levels (Formality)
+
+* Plain (FormalHigh, dictionary form) e.g. 하다
+* Intimate (InformalLow) e.g. 해
+* Polite (InformalHigh) e.g. 해요
+* Deferential (FormalHigh) e.g. 합니다
+
+#### Clause Types
+
+* Statement (Declarative) e.g. 한다
+* Question (Inquisitive) e.g. 하느냐?
+* Confirmation (Confirmation) e.g. 하지?
+* Suggestion (Propositive) e.g. 하자
+* Command (Imperative) e.g. 해라
+
+## Thanks to
+
+[hangulsoup.com](https://hangulsoup.com/tools/conjugator.php) for inspiration regarding the UX design and including advanced speech levels and tenses.
+
+[dbravender of dongsa.net](https://koreanverb.app/?search=%ED%95%98%EB%8B%A4) for making his conjugator [source code](https://github.com/dbravender/korean_conjugation) publicly available, including research of special cases.
+
+[BenjaminTMilnes](https://github.com/BenjaminTMilnes) for making his DotNet KoreanRomanisation [source code](https://github.com/BenjaminTMilnes/KoreanRomanisation) publicly available. In particular, I like his implementations of KoreanLetter and KoreanSyllable.
