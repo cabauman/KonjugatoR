@@ -42,7 +42,7 @@
 
 #### Speech Levels (Formality)
 
-* Plain (FormalHigh, dictionary form) e.g. 하다
+* Plain (FormalLow, dictionary form) e.g. 하다
 * Intimate (InformalLow) e.g. 해
 * Polite (InformalHigh) e.g. 해요
 * Deferential (FormalHigh) e.g. 합니다
@@ -54,6 +54,18 @@
 * Confirmation (Confirmation) e.g. 하지?
 * Suggestion (Propositive) e.g. 하자
 * Command (Imperative) e.g. 해라
+
+#### Basics
+
+* Jamo (자모): letters in the Korean alphabet.
+* Consonant (자음)
+* Vowel (모음)
+
+#### Syllable Components
+
+* Initial/Lead (초성)
+* Medial (중성)
+* Final (받침/종성): the final consonant (or consonant cluster) at the end of a Korean syllable.
 
 ## Thanks to
 
