@@ -32,12 +32,13 @@
 
 #### Tenses
 
-* Remote Past e.g. 했었다
+* Remote Past (Past Perfect) e.g. 했었다
 * Probable Past e.g. 했을 것이다
 * Past e.g. 했다
 * Present e.g. 한다
 * Probable Future e.g. 할 것이다
 * Intentional Future e.g. 하겠다
+* Past Future e.g. 했겠다
 
 #### Speech Levels (Formality)
 
