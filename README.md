@@ -67,6 +67,26 @@
 * Medial (중성)
 * Final (받침/종성): the final consonant (or consonant cluster) at the end of a Korean syllable.
 
+#### Verb/adjective irregulars for 아/어 suffix
+
+* ㅂ-Irregular	Drop final consonant ㅂ, add hangul 우** (e.g. 춥 -> 추우)
+* ㅅ-Irregular	Drop final consonant ㅅ (e.g. 낫 -> 나)
+* ㄷ-Irregular	Replace final consonant ㄷ with ㄹ (e.g. 듣 -> 들)
+* ㅎ-Irregular	Drop final consonant ㅎ (e.g. 그렇	그러)
+* ㄹ-Irregular	Drop final consonant ㄹ (e.g. 달 -> 다); The conjugation follows the same pattern as the stems with no 받침 e.g. 팔면, 살면; not 으면. Whenever the ㄹ 받침 is followed by ㄴ,ㅂ,ㅅ, the ㄹ disappears.
+* 으-Irregular	When the verb stem ends with the 모음 “으”, the “으” is dropped whenever the verb tense ending begins with a 모음 and 어 / 아 added in it's place. e.g. 쓰다 → 써요 (ㅆ+어요)
+* 르-Irregular	Add ㄹ as an ending consonant to the second to last hangul (e.g. 고르 -> 골르)
+
+#### Common Suffixes
+
+* ~아/어
+* ~ㄴ/은
+* ~ㄴ/는
+* ~ㅂ/습
+* ~ㄹ/을
+* (으)
+
+
 ## Thanks to
 
 [hangulsoup.com](https://hangulsoup.com/tools/conjugator.php) for inspiration regarding the UX design and including advanced speech levels and tenses.
