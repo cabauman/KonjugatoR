@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents various clause types.
     /// </summary>
-    public enum SentenceFunction
+    public enum ClauseType
     {
         Declarative,    // Statement
         Interrogative,  // Question
