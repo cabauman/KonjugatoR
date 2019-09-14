@@ -10,11 +10,29 @@ namespace KoreanConjugator
     {
         #region Character Code Constants
 
+        /// <summary>
+        /// 가
+        /// </summary>
         private const int FirstKoreanSyllableCharacterCode = 44032;
+
+        /// <summary>
+        /// 힣
+        /// </summary>
         private const int LastKoreanSyllableCharacterCode = 55203;
 
+        /// <summary>
+        /// ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ
+        /// </summary>
         private const int NumberOfInitials = 19;
+
+        /// <summary>
+        /// ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ
+        /// </summary>
         private const int NumberOfMedials = 21;
+
+        /// <summary>
+        /// \0ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ
+        /// </summary>
         private const int NumberOfFinals = 28;
 
         #endregion
@@ -90,9 +108,9 @@ namespace KoreanConjugator
         {
             get
             {
-                var initialCharacterCode = (CharacterCode - FirstKoreanSyllableCharacterCode) / (NumberOfMedials * NumberOfFinals);
+                var initialIndex = (CharacterCode - FirstKoreanSyllableCharacterCode) / (NumberOfMedials * NumberOfFinals);
 
-                return KoreanLetter.GetKoreanLetterFromInitialCharacterCode(initialCharacterCode);
+                return KoreanLetter.GetKoreanLetterFromInitialIndex(initialIndex);
             }
         }
 
@@ -104,9 +122,9 @@ namespace KoreanConjugator
         {
             get
             {
-                var medialCharacterCode = ((CharacterCode - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) / NumberOfFinals;
+                var medialIndex = ((CharacterCode - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) / NumberOfFinals;
 
-                return KoreanLetter.GetKoreanLetterFromMedialCharacterCode(medialCharacterCode);
+                return KoreanLetter.GetKoreanLetterFromMedialIndex(medialIndex);
             }
         }
 
@@ -118,9 +136,9 @@ namespace KoreanConjugator
         {
             get
             {
-                var finalCharacterCode = ((CharacterCode - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) % NumberOfFinals;
+                var finalIndex = ((CharacterCode - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) % NumberOfFinals;
 
-                return KoreanLetter.GetKoreanLetterFromFinalCharacterCode(finalCharacterCode);
+                return KoreanLetter.GetKoreanLetterFromFinalIndex(finalIndex);
             }
         }
 
@@ -131,9 +149,9 @@ namespace KoreanConjugator
         {
             get
             {
-                var finalCharacterCode = ((CharacterCode - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) % NumberOfFinals;
+                var finalIndex = ((CharacterCode - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) % NumberOfFinals;
 
-                return finalCharacterCode > 0;
+                return finalIndex > 0;
             }
         }
 

@@ -89,14 +89,14 @@ namespace KoreanConjugator
         private const int FirstKoreanLetterCharacterCode = 4352;
         private const int LastKoreanLetterCharacterCode = 4607;
 
-        private const int FirstCommonInitialCharacterCode = 4352;
-        private const int LastCommonInitialCharacterCode = 4370;
+        private const int FirstModernInitialCharacterCode = 4352;
+        private const int LastModernInitialCharacterCode = 4370;
 
-        private const int FirstCommonMedialCharacterCode = 4449;
-        private const int LastCommonMedialCharacterCode = 4469;
+        private const int FirstModernMedialCharacterCode = 4449;
+        private const int LastModernMedialCharacterCode = 4469;
 
-        private const int FirstCommonFinalCharacterCode = 4520;
-        private const int LastCommonFinalCharacterCode = 4546;
+        private const int FirstModernFinalCharacterCode = 4520;
+        private const int LastModernFinalCharacterCode = 4546;
 
         #endregion
 
@@ -118,6 +118,8 @@ namespace KoreanConjugator
             CharacterCode = characterCode;
         }
 
+        #endregion
+
         #region Core Properties
 
         /// <summary>
@@ -127,60 +129,70 @@ namespace KoreanConjugator
 
         #endregion
 
-        /// <summary>
-        /// Gets the letter corresponding to the initial character code.
-        /// </summary>
-        /// <param name="initialCharacterCode">The character code of the initial.</param>
-        /// <returns>The corresponding letter.</returns>
-        public static KoreanLetter GetKoreanLetterFromInitialCharacterCode(int initialCharacterCode)
-        {
-            if (!IsACommonInitial(FirstCommonInitialCharacterCode + initialCharacterCode))
-            {
-                var message = $"Korean initials are numbered between 0 and {LastCommonInitialCharacterCode - FirstCommonInitialCharacterCode}";
+        #region Operator Overloads
 
-                throw new ArgumentOutOfRangeException(nameof(initialCharacterCode), message);
+        public static bool operator ==(KoreanLetter left, KoreanLetter right) => Equals(left, right);
+
+        public static bool operator !=(KoreanLetter left, KoreanLetter right) => !Equals(left, right);
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the letter corresponding to the initial index.
+        /// </summary>
+        /// <param name="initialIndex">The index of the initial.</param>
+        /// <returns>The corresponding letter.</returns>
+        public static KoreanLetter GetKoreanLetterFromInitialIndex(int initialIndex)
+        {
+            if (!IsAModernInitial(FirstModernInitialCharacterCode + initialIndex))
+            {
+                var message = $"Korean initials are numbered between 0 and {LastModernInitialCharacterCode - FirstModernInitialCharacterCode}";
+
+                throw new ArgumentOutOfRangeException(nameof(initialIndex), message);
             }
 
-            return new KoreanLetter(FirstCommonInitialCharacterCode + initialCharacterCode);
+            return new KoreanLetter(FirstModernInitialCharacterCode + initialIndex);
         }
 
         /// <summary>
-        /// Gets the letter corresponding to the medial character code.
+        /// Gets the letter corresponding to the medial index.
         /// </summary>
-        /// <param name="medialCharacterCode">The character code of the medial.</param>
+        /// <param name="medialIndex">The index of the medial.</param>
         /// <returns>The corresponding letter.</returns>
-        public static KoreanLetter GetKoreanLetterFromMedialCharacterCode(int medialCharacterCode)
+        public static KoreanLetter GetKoreanLetterFromMedialIndex(int medialIndex)
         {
-            if (!IsACommonMedial(FirstCommonMedialCharacterCode + medialCharacterCode))
+            if (!IsAModernMedial(FirstModernMedialCharacterCode + medialIndex))
             {
-                var message = $"Korean medials are numbered between 0 and {LastCommonMedialCharacterCode - FirstCommonMedialCharacterCode}";
+                var message = $"Korean medials are numbered between 0 and {LastModernMedialCharacterCode - FirstModernMedialCharacterCode}";
 
-                throw new ArgumentOutOfRangeException(nameof(medialCharacterCode), message);
+                throw new ArgumentOutOfRangeException(nameof(medialIndex), message);
             }
 
-            return new KoreanLetter(FirstCommonMedialCharacterCode + medialCharacterCode);
+            return new KoreanLetter(FirstModernMedialCharacterCode + medialIndex);
         }
 
         /// <summary>
-        /// Gets the letter corresponding to the final character code.
+        /// Gets the letter corresponding to the final index.
         /// </summary>
-        /// <param name="finalCharacterCode">The character code of the final.</param>
+        /// <param name="finalIndex">The index of the final.</param>
         /// <returns>The corresponding Korean letter.</returns>
-        public static KoreanLetter GetKoreanLetterFromFinalCharacterCode(int finalCharacterCode)
+        public static KoreanLetter GetKoreanLetterFromFinalIndex(int finalIndex)
         {
-            if (finalCharacterCode == 0)
+            if (finalIndex == 0)
             {
                 return new KoreanLetter(-1);
             }
 
-            if (!IsACommonFinal(FirstCommonFinalCharacterCode + finalCharacterCode - 1))
+            if (!IsAModernFinal(FirstModernFinalCharacterCode + finalIndex - 1))
             {
-                var message = $"Korean finals are numbered between 1 and {LastCommonFinalCharacterCode - FirstCommonFinalCharacterCode + 1}";
+                var message = $"Korean finals are numbered between 1 and {LastModernFinalCharacterCode - FirstModernFinalCharacterCode + 1}";
 
-                throw new ArgumentOutOfRangeException(nameof(finalCharacterCode), message);
+                throw new ArgumentOutOfRangeException(nameof(finalIndex), message);
             }
 
-            return new KoreanLetter(FirstCommonFinalCharacterCode + finalCharacterCode - 1);
+            return new KoreanLetter(FirstModernFinalCharacterCode + finalIndex - 1);
         }
 
         /// <summary>
@@ -198,9 +210,9 @@ namespace KoreanConjugator
         /// </summary>
         /// <param name="characterCode">The character code.</param>
         /// <returns><c>true</c> if the character code corresponds to a common initial; otherwise, <c>false</c>.</returns>
-        public static bool IsACommonInitial(int characterCode)
+        public static bool IsAModernInitial(int characterCode)
         {
-            return characterCode >= FirstCommonInitialCharacterCode && characterCode <= LastCommonInitialCharacterCode;
+            return characterCode >= FirstModernInitialCharacterCode && characterCode <= LastModernInitialCharacterCode;
         }
 
         /// <summary>
@@ -208,9 +220,9 @@ namespace KoreanConjugator
         /// </summary>
         /// <param name="characterCode">The character code.</param>
         /// <returns><c>true</c> if the character code corresponds to a common medial; otherwise, <c>false</c>.</returns>
-        public static bool IsACommonMedial(int characterCode)
+        public static bool IsAModernMedial(int characterCode)
         {
-            return characterCode >= FirstCommonMedialCharacterCode && characterCode <= LastCommonMedialCharacterCode;
+            return characterCode >= FirstModernMedialCharacterCode && characterCode <= LastModernMedialCharacterCode;
         }
 
         /// <summary>
@@ -218,9 +230,9 @@ namespace KoreanConjugator
         /// </summary>
         /// <param name="characterCode">The character code.</param>
         /// <returns><c>true</c> if the character code corresponds to a common final; otherwise, <c>false</c>.</returns>
-        public static bool IsACommonFinal(int characterCode)
+        public static bool IsAModernFinal(int characterCode)
         {
-            return characterCode >= FirstCommonFinalCharacterCode && characterCode <= LastCommonFinalCharacterCode;
+            return characterCode >= FirstModernFinalCharacterCode && characterCode <= LastModernFinalCharacterCode;
         }
 
         #endregion
