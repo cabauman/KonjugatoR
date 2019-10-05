@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace KoreanConjugator
 {
+    /// <summary>
+    /// Represents a utility that can conjugate Korean verbs, adjectives, and nouns from dictionary form.
+    /// </summary>
     public class Conjugator
     {
         private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map =
@@ -74,6 +77,23 @@ namespace KoreanConjugator
             { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Propositive),      "," },
         };
 
+        private readonly ISuffixTemplateParser suffixTemplateParser;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Conjugator"/> class.
+        /// </summary>
+        /// <param name="suffixTemplateParser">The implementation to use for parsing suffix templates.</param>
+        public Conjugator(ISuffixTemplateParser suffixTemplateParser)
+        {
+            this.suffixTemplateParser = suffixTemplateParser;
+        }
+
+        /// <summary>
+        /// Transforms the given verb stem into a specific grammatical form specified by the parms.
+        /// </summary>
+        /// <param name="verbStem">The portion of the verb without the '다' syllable at the end.</param>
+        /// <param name="conjugationParams">The params used to specify the conjugated form.</param>
+        /// <returns>A conjugation result.</returns>
         public ConjugationResult Conjugate(string verbStem, ConjugationParams conjugationParams)
         {
             ConjugationResult result = new ConjugationResult();
@@ -84,6 +104,13 @@ namespace KoreanConjugator
             MergeSyllablesFromLeftToRight(modifiedVerbStem, suffixes);
 
             return result;
+        }
+
+        private static bool IsIrregular(string verbStem)
+        {
+            return HangulUtil.IsSyllable(verbStem.Last()) &&
+                HangulUtil.Irregulars.Contains(HangulUtil.Final(verbStem.Last())) &&
+                !HangulUtil.IrregularExceptions.Contains(verbStem);
         }
 
         private string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
@@ -317,51 +344,12 @@ namespace KoreanConjugator
             return sb.ToString();
         }
 
-        public string GetCorrectSuffixVariant(string precedingText, string suffixString)
+        private string GetCorrectSuffixVariant(string precedingText, string suffixString)
         {
-            var suffixTemplate = ParseSuffixTemplate(suffixString);
+            var suffixTemplate = suffixTemplateParser.Parse(suffixString);
             var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
 
             return suffixVariant;
-        }
-
-        public SuffixTemplate ParseSuffixTemplate(string suffixTemplate)
-        {
-            // V/A + ㄹ/을 거
-            // 하 + [으]시 returns 시
-            // 먹 + [아/어]도 returns 어
-            // (?:^| )(A\/V|A|V|N)\+([가-힣ㄱ-ㅣ])\/([가-힣])(.*)
-            // (?:^| )(A\/V|A|V|N)\+(\([가-힣]\))([가-힣])(.*)
-            // (?:^| )(A\/V|A|V|N)\+(\([가-힣]\))|([가-힣])\/([가-힣])(.*)
-            // ([ㅂ|ㄹ|ㄴ|ㅁ|가-힣])\/([가-힣])
-            // \(([으|이])\)
-            // (A|V)\+(?:\(([으|이])\))?([가-힣]+)
-            // (A|V)\+(?:([ㅂ|ㄹ|ㄴ|ㅁ|가-힣])\/([가-힣]))([가-힣 \/]*)
-            string pattern = "(?:^| )(?<ClassType>A/V|A|V|N)+(([가-힣]))|([가-힣])/([가-힣])(.*)";
-            var regex = new Regex(pattern);
-            var match = regex.Match(suffixTemplate);
-            var group1 = match.Groups["GroupName"].Value;
-
-            var textBetweenParentheses = suffixTemplate.Split('(', ')')[1];
-            var options = textBetweenParentheses.Split('/');
-
-            GroupCollection collection = match.Groups;
-            // Note that group 0 is always the whole match
-            for (int i = 1; i < collection.Count; i++)
-            {
-                Group group = collection[i];
-                string name = regex.GroupNameFromNumber(i);
-                Console.WriteLine("{0}: {1} {2}", name, group.Success, group.Value);
-            }
-
-            return options;
-        }
-
-        internal static bool IsIrregular(string verbStem)
-        {
-            return HangulUtil.IsSyllable(verbStem.Last()) &&
-                HangulUtil.Irregulars.Contains(HangulUtil.Final(verbStem.Last())) &&
-                !HangulUtil.IrregularExceptions.Contains(verbStem);
         }
     }
 }
