@@ -204,7 +204,7 @@ namespace KoreanConjugator
 
         internal static bool IsLetter(char character)
         {
-            throw new NotImplementedException();
+            return character >= FirstKoreanLetterCharacterCode && character <= LastKoreanLetterCharacterCode;
         }
 
         internal static bool IsSyllable(char character)
