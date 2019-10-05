@@ -7,6 +7,6 @@
     {
         Past,
         Present,
-        Future
+        Future,
     }
 }

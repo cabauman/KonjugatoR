@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace KoreanConjugator
 {
@@ -106,13 +105,6 @@ namespace KoreanConjugator
             return result;
         }
 
-        private static bool IsIrregular(string verbStem)
-        {
-            return HangulUtil.IsSyllable(verbStem.Last()) &&
-                HangulUtil.Irregulars.Contains(HangulUtil.Final(verbStem.Last())) &&
-                !HangulUtil.IrregularExceptions.Contains(verbStem);
-        }
-
         private string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
         {
             var suffixes = new List<string>();
@@ -186,7 +178,7 @@ namespace KoreanConjugator
             var sb = new StringBuilder(verbStem);
             char lastSyllableOfVerbStem = verbStem.Last();
 
-            if (IsIrregular(verbStem))
+            if (HangulUtil.IsIrregular(verbStem))
             {
                 if ("아어았었".Any(value => value == firstSyllableOfFirstSuffix))
                 {
