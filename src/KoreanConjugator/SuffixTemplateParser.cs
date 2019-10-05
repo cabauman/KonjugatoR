@@ -19,7 +19,8 @@ namespace KoreanConjugator
             string optionalNoBadchim = $"(?:{noBadchim}/)?";
             string badchimNoBadchim = $"\\({optionalNoBadchim}{badchim}\\)";
             string optionalBadchimNoBadchim = $"(?:{badchimNoBadchim})?";
-            string pattern = $"{wordClass} \\+ {optionalBadchimNoBadchim}";
+            string staticTextGroup = "(?<StaticText>.*)";
+            string pattern = $"{wordClass} \\+ {optionalBadchimNoBadchim}{staticTextGroup}";
 
             var regex = new Regex(pattern);
             var match = regex.Match(templateText);
@@ -32,6 +33,12 @@ namespace KoreanConjugator
             var wordClassResult = match.Groups["WordClass"].Value;
             var badchimlessConnector = match.Groups["NoBadchim"].Value;
             var badchimConnector = match.Groups["Badchim"].Value;
+            var staticText = match.Groups["StaticText"].Value;
+
+            if (badchimlessConnector.Equals("아") && badchimConnector.Equals("어"))
+            {
+                return new AEuSuffixTemplate(templateText, staticText);
+            }
 
             GroupCollection collection = match.Groups;
 
@@ -43,7 +50,7 @@ namespace KoreanConjugator
                 Console.WriteLine("{0}: {1} {2}", name, group.Success, group.Value);
             }
 
-            var template = new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector);
+            var template = new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector, staticText);
 
             return template;
         }

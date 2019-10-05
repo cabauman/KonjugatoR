@@ -9,9 +9,11 @@
         /// Initializes a new instance of the <see cref="SuffixTemplate"/> class.
         /// </summary>
         /// <param name="text">The template text.</param>
-        public SuffixTemplate(string text)
+        /// <param name="staticText">The portion of the template text that doesn't change.</param>
+        public SuffixTemplate(string text, string staticText)
         {
             Text = text;
+            StaticText = staticText;
         }
 
         /// <summary>

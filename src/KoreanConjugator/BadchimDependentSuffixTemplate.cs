@@ -14,8 +14,9 @@ namespace KoreanConjugator
         /// <param name="wordClass">The word class(es).</param>
         /// <param name="badchimConnector">The badchim connector.</param>
         /// <param name="badchimlessConnector">The badchimless connector.</param>
-        public BadchimDependentSuffixTemplate(string text, string wordClass, string badchimConnector, string badchimlessConnector)
-            : base(text)
+        /// <param name="staticText">The portion of the template text that doesn't change.</param>
+        public BadchimDependentSuffixTemplate(string text, string wordClass, string badchimConnector, string badchimlessConnector, string staticText)
+            : base(text, staticText)
         {
             WordClass = wordClass;
             BadchimConnector = badchimConnector;
