@@ -14,13 +14,14 @@ namespace KoreanConjugator
             // V/A + [ㄹ/을] 거
 
             string wordClass = "(?<WordClass>A/V|A|V)";
+            string optionalWordClass = $"(?:{wordClass} \\+ )?";
             string noBadchim = "(?<NoBadchim>[ㅂ|ㄹ|ㄴ|ㅁ|가-힣])";
             string badchim = "(?<Badchim>[가-힣])";
             string optionalNoBadchim = $"(?:{noBadchim}/)?";
             string badchimNoBadchim = $"\\({optionalNoBadchim}{badchim}\\)";
             string optionalBadchimNoBadchim = $"(?:{badchimNoBadchim})?";
             string staticTextGroup = "(?<StaticText>.*)";
-            string pattern = $"{wordClass} \\+ {optionalBadchimNoBadchim}{staticTextGroup}";
+            string pattern = $"{optionalWordClass}{optionalBadchimNoBadchim}{staticTextGroup}";
 
             var regex = new Regex(pattern);
             var match = regex.Match(templateText);
