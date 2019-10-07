@@ -75,17 +75,17 @@ namespace KoreanConjugator
         {
             if (initial < 0 || initial >= NumberOfInitials)
             {
-                throw new ArgumentOutOfRangeException(nameof(initial), $"The initial character code must be between 0 and {NumberOfInitials - 1}");
+                throw new ArgumentOutOfRangeException(nameof(initial), $"The index of the initial character must be between 0 and {NumberOfInitials - 1}");
             }
 
             if (medial < 0 || medial >= NumberOfMedials)
             {
-                throw new ArgumentOutOfRangeException(nameof(medial), $"The medial character code must be between 0 and {NumberOfMedials - 1}");
+                throw new ArgumentOutOfRangeException(nameof(medial), $"The index of the medial character must be between 0 and {NumberOfMedials - 1}");
             }
 
             if (final < 0 || final >= NumberOfFinals)
             {
-                throw new ArgumentOutOfRangeException(nameof(final), $"The final character code must be between 0 and {NumberOfFinals - 1}");
+                throw new ArgumentOutOfRangeException(nameof(final), $"The index of the final character must be between 0 and {NumberOfFinals - 1}");
             }
 
             CharacterCode = (initial * NumberOfMedials * NumberOfFinals) + (medial * NumberOfFinals) + final + FirstKoreanSyllableCharacterCode;
