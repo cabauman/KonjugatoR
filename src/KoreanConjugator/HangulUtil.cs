@@ -5,7 +5,7 @@ using System.Linq;
 namespace KoreanConjugator
 {
     /// <summary>
-    /// Represents a utility for performing common operations on Hangul letters and syllables.
+    /// Represents a utility for performing common operations on Korean letters and syllables.
     /// </summary>
     public static class HangulUtil
     {
@@ -16,17 +16,40 @@ namespace KoreanConjugator
         private const int NumberOfMedials = 21;
         private const int NumberOfFinals = 28;
 
+        private const int FirstModernCompatibilityLetterCharacterCode = 12593;
+        private const int LastModernCompatibilityLetterCharacterCode = 12643;
+
+        private const int FirstModernCompatibilityConsonantCharacterCode = 12593;
+        private const int LastModernCompatibilityConsonantCharacterCode = 12622;
+
+        private const int FirstModernCompatibilityVowelCharacterCode = 12623;
+        private const int LastModernCompatibilityVowelCharacterCode = 12643;
+
         private const int FirstKoreanLetterCharacterCode = 4352;
         private const int LastKoreanLetterCharacterCode = 4607;
 
-        private const int FirstCommonInitialCharacterCode = 4352;
-        private const int LastCommonInitialCharacterCode = 4370;
+        private const int FirstModernInitialCharacterCode = 4352;
+        private const int LastModernInitialCharacterCode = 4370;
 
-        private const int FirstCommonMedialCharacterCode = 4449;
-        private const int LastCommonMedialCharacterCode = 4469;
+        private const int FirstModernMedialCharacterCode = 4449;
+        private const int LastModernMedialCharacterCode = 4469;
 
-        private const int FirstCommonFinalCharacterCode = 4520;
-        private const int LastCommonFinalCharacterCode = 4546;
+        private const int FirstModernFinalCharacterCode = 4520;
+        private const int LastModernFinalCharacterCode = 4546;
+
+        private static readonly string CompatibilityInitials = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+        private static readonly string Initials = "ᄀᄁᄂᄃᄄᄅᄆᄇᄈᄉᄊᄋᄌᄍᄎᄏᄐᄑᄒ";
+        private static readonly string CompatibilityMedials = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ";
+        private static readonly string Medials = "ᅡᅢᅣᅤᅥᅦᅧᅨᅩᅪᅫᅬᅭᅮᅯᅰᅱᅲᅳᅴᅵ";
+        private static readonly string CompatibilityFinals = "\0ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+        private static readonly string Finals = "\0ᆨᆩᆪᆫᆬᆭᆮᆯᆰᆱᆲᆳᆴᆵᆶᆷᆸᆹᆺᆻᆼᆽᆾᆿᇀᇁᇂ";
+
+        private static readonly string ModernCompatibilityLetters = CompatibilityInitials + CompatibilityMedials + CompatibilityFinals;
+        private static readonly string ModernComposableLetters = Initials + Medials + Finals;
+
+        private static readonly Dictionary<char, char> CompatibilityToComposableFinalMap = CompatibilityFinals
+            .Zip(Finals, (k, v) => new { k, v })
+            .ToDictionary(x => x.k, x => x.v);
 
         private static readonly char[] Irregulars = { 'ㅅ', 'ㄷ', 'ㅂ', 'ㅡ', '르', 'ㄹ', 'ㅎ' };
 
@@ -54,45 +77,75 @@ namespace KoreanConjugator
         };
 
         /// <summary>
+        /// Gets the index of the Korean letter in the "Initial" position.
+        /// </summary>
+        /// <param name="syllable">The Korean syllable.</param>
+        /// <returns>The index of the Korean letter in the "Initial" position.</returns>
+        public static int IndexOfInitial(char syllable)
+        {
+            return (syllable - FirstKoreanSyllableCharacterCode) / (NumberOfMedials * NumberOfFinals);
+        }
+
+        /// <summary>
         /// Gets the Korean letter in the "Initial" position.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <returns>The Korean letter in the "Initial" position.</returns>
         public static char Initial(char syllable)
         {
-            var initialOffset = (syllable - FirstKoreanSyllableCharacterCode) / (NumberOfMedials * NumberOfFinals);
+            var initialOffset = IndexOfInitial(syllable);
 
-            return (char)(FirstCommonInitialCharacterCode + initialOffset);
+            return (char)(FirstModernInitialCharacterCode + initialOffset);
+        }
+
+        /// <summary>
+        /// Gets the index of the Korean letter in the "Medial" position.
+        /// </summary>
+        /// <param name="syllable">A Korean syllable.</param>
+        /// <returns>The index of the Korean letter in the "Medial" position.</returns>
+        public static int IndexOfMedial(char syllable)
+        {
+            return ((syllable - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) / NumberOfFinals;
         }
 
         /// <summary>
         /// Gets the Korean letter in the "Medial" position.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <returns>The Korean letter in the "Medial" position.</returns>
         public static char Medial(char syllable)
         {
-            var medialOffset = ((syllable - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) / NumberOfFinals;
+            var medialOffset = IndexOfMedial(syllable);
 
-            return (char)(FirstCommonMedialCharacterCode + medialOffset);
+            return (char)(FirstModernMedialCharacterCode + medialOffset);
+        }
+
+        /// <summary>
+        /// Gets the index of the Korean letter in the "Final" position.
+        /// </summary>
+        /// <param name="syllable">A Korean syllable.</param>
+        /// <returns>The index of the Korean letter in the "Final" position.</returns>
+        public static int IndexOfFinal(char syllable)
+        {
+            return (syllable - FirstKoreanSyllableCharacterCode) % NumberOfFinals;
         }
 
         /// <summary>
         /// Gets the Korean letter in the "Final" position.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <returns>The Korean letter in the "Final" position.</returns>
         public static char Final(char syllable)
         {
-            var finalOffset = ((syllable - FirstKoreanSyllableCharacterCode) % (NumberOfMedials * NumberOfFinals)) % NumberOfFinals;
+            var finalOffset = IndexOfFinal(syllable);
 
-            return (char)(FirstCommonFinalCharacterCode + finalOffset);
+            return (char)(FirstModernFinalCharacterCode + finalOffset);
         }
 
         /// <summary>
         /// Gets a value indicating whether the syllable contains a Korean letter in the "Final" position.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <returns><c>true</c> if the syllable has a Final; otherwise, <c>false</c>.</returns>
         public static bool HasFinal(char syllable)
         {
@@ -104,7 +157,7 @@ namespace KoreanConjugator
         /// <summary>
         /// Gets a value indicating whether the syllable begins with a vowel.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <returns><c>true</c> if the syllable begins with a vowel; otherwise, <c>false</c>.</returns>
         public static bool BeginsWithVowel(char syllable)
         {
@@ -114,7 +167,7 @@ namespace KoreanConjugator
         /// <summary>
         /// Removes the Korean letter in the "Final" position of the syllable.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <returns>The resulting Korean syllable.</returns>
         public static char DropFinal(char syllable)
         {
@@ -124,7 +177,7 @@ namespace KoreanConjugator
         /// <summary>
         /// Sets the Korean letter in the "Final" position of the syllable.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
+        /// <param name="syllable">A Korean syllable.</param>
         /// <param name="final">The Korean letter to place in the "Final" postion.</param>
         /// <returns>The resulting Korean syllable.</returns>
         public static char SetFinal(char syllable, char final)
@@ -136,45 +189,59 @@ namespace KoreanConjugator
         }
 
         /// <summary>
-        /// Gets a value indicating whether the syllable begins with ㄴ.
+        /// Gets a value indicating whether the syllable begins with 'ㄴ'.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
-        /// <returns><c>true</c> if the syllable begins with ㄴ; otherwise, <c>false</c>.</returns>
+        /// <param name="syllable">A Korean syllable.</param>
+        /// <returns><c>true</c> if the syllable begins with 'ㄴ'; otherwise, <c>false</c>.</returns>
         public static bool BeginsWithNieun(char syllable)
         {
             return Initial(syllable) == 'ᄂ';
         }
 
         /// <summary>
-        /// Gets a value indicating whether the syllable begins with ㅅ.
+        /// Gets a value indicating whether the syllable begins with 'ㅅ'.
         /// </summary>
-        /// <param name="syllable">The Hangul syllable.</param>
-        /// <returns><c>true</c> if the syllable begins with ㅅ; otherwise, <c>false</c>.</returns>
+        /// <param name="syllable">A Korean syllable.</param>
+        /// <returns><c>true</c> if the syllable begins with 'ㅅ'; otherwise, <c>false</c>.</returns>
         public static bool BeginsWithSieut(char syllable)
         {
             return Initial(syllable) == 'ᄉ';
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the syllable begins with 'ㅅ'.
+        /// </summary>
+        /// <param name="syllable">A Korean syllable.</param>
+        /// <param name="initial">A Korean letter that belongs in the "Initial" position of a syllable.</param>
+        /// <param name="medial">A Korean letter that belongs in the "Medial" position of a syllable.</param>
+        /// <returns><c>true</c> if the syllable begins with 'ㅅ'; otherwise, <c>false</c>.</returns>
         public static bool BeginsWith(char syllable, char initial, char medial)
         {
             return IsSyllable(syllable) && Initial(syllable) == initial && Medial(syllable) == medial;
         }
 
+        /// <summary>
+        /// Constructs a Korean syllable.
+        /// </summary>
+        /// <param name="initial">The index of the initial jamo character.</param>
+        /// <param name="medial">The index of the medial jamo character.</param>
+        /// <param name="final">The index of the final jamo character.</param>
+        /// <returns>The constructed Korean syllable.</returns>
         public static char Construct(int initial, int medial, int final)
         {
             if (initial < 0 || initial >= NumberOfInitials)
             {
-                throw new ArgumentOutOfRangeException(nameof(initial), $"The initial character code must be between 0 and {NumberOfInitials - 1}");
+                throw new ArgumentOutOfRangeException(nameof(initial), $"The index of the initial character must be between 0 and {NumberOfInitials - 1}");
             }
 
             if (medial < 0 || medial >= NumberOfMedials)
             {
-                throw new ArgumentOutOfRangeException(nameof(medial), $"The medial character code must be between 0 and {NumberOfMedials - 1}");
+                throw new ArgumentOutOfRangeException(nameof(medial), $"The index of the medial character must be between 0 and {NumberOfMedials - 1}");
             }
 
             if (final < 0 || final >= NumberOfFinals)
             {
-                throw new ArgumentOutOfRangeException(nameof(final), $"The final character code must be between 0 and {NumberOfFinals - 1}");
+                throw new ArgumentOutOfRangeException(nameof(final), $"The index of the final character must be between 0 and {NumberOfFinals - 1}");
             }
 
             int characterCode = (initial * NumberOfMedials * NumberOfFinals) + (medial * NumberOfFinals) + final + FirstKoreanSyllableCharacterCode;
@@ -182,6 +249,12 @@ namespace KoreanConjugator
             return (char)characterCode;
         }
 
+        /// <summary>
+        /// Contracts two syllables into one.
+        /// </summary>
+        /// <param name="syllable1">The first syllable.</param>
+        /// <param name="syllable2">The second syllable.</param>
+        /// <returns>The contracted Korean syllable.</returns>
         public static char Contract(char syllable1, char syllable2)
         {
             var medial2 = Medial(syllable2);
@@ -195,21 +268,76 @@ namespace KoreanConjugator
             return Construct(Initial(syllable1), medial, Final(syllable2));
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the verb stem is irregular.
+        /// </summary>
+        /// <param name="verbStem">A verb without '다' at the end.</param>
+        /// <returns><c>true</c> if the verb stem is irregular; otherwise, <c>false</c>.</returns>
         public static bool IsIrregular(string verbStem)
         {
+            if (string.IsNullOrEmpty(verbStem))
+            {
+                throw new ArgumentException(nameof(verbStem));
+            }
+
             return IsSyllable(verbStem.Last()) &&
                 Irregulars.Contains(Final(verbStem.Last())) &&
                 !IrregularExceptions.Contains(verbStem);
         }
 
-        internal static bool IsLetter(char character)
+        /// <summary>
+        /// Gets a value indicating whether the character is a composable letter.
+        /// </summary>
+        /// <param name="character">The character to check.</param>
+        /// <returns><c>true</c> if the character is a composable letter; otherwise, <c>false</c>.</returns>
+        public static bool IsComposableLetter(char character)
         {
             return character >= FirstKoreanLetterCharacterCode && character <= LastKoreanLetterCharacterCode;
         }
 
-        internal static bool IsSyllable(char character)
+        /// <summary>
+        /// Gets a value indicating whether the character is a modern compatibility letter.
+        /// </summary>
+        /// <param name="character">The character to check.</param>
+        /// <returns><c>true</c> if the character is a modern compatibility letter; otherwise, <c>false</c>.</returns>
+        public static bool IsModernCompatibilityLetter(char character)
+        {
+            return character >= FirstModernCompatibilityLetterCharacterCode && character <= LastModernCompatibilityLetterCharacterCode;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the character is a Korean syllable.
+        /// </summary>
+        /// <param name="character">The character to check.</param>
+        /// <returns><c>true</c> if the character is a Korean syllable; otherwise, <c>false</c>.</returns>
+        public static bool IsSyllable(char character)
         {
             return character >= FirstKoreanSyllableCharacterCode && character <= LastKoreanSyllableCharacterCode;
+        }
+
+        /// <summary>
+        /// Gets the composable version of a compatibility letter.
+        /// </summary>
+        /// <param name="compatibilityLetter">A compatibility letter.</param>
+        /// <returns>A composable Korean letter that belongs in the "Final" position of a syllable.</returns>
+        public static char ToComposableFinal(char compatibilityLetter)
+        {
+            if (!CompatibilityToComposableFinalMap.TryGetValue(compatibilityLetter, out var result))
+            {
+                throw new ArgumentException($"[{compatibilityLetter}] is not a compatibility letter.");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the index of the "Final".
+        /// </summary>
+        /// <param name="final">A Korean letter that belongs in the "Final" posoiton of a syllable.</param>
+        /// <returns>The index of the "Final".</returns>
+        public static int FinalToIndex(char final)
+        {
+            return (final + 1) - FirstModernFinalCharacterCode;
         }
     }
 }
