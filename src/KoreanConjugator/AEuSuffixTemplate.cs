@@ -26,9 +26,9 @@ namespace KoreanConjugator
             while (index >= 0)
             {
                 var medial = HangulUtil.Medial(precedingText[index]);
-                if (medial != 'ㅡ')
+                if (medial != 'ᅳ')
                 {
-                    if (medial == 'ㅏ' || medial == 'ㅗ')
+                    if (medial == 'ᅡ' || medial == 'ᅩ')
                     {
                         connector = "아";
                     }
