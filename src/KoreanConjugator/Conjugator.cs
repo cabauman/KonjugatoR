@@ -270,10 +270,13 @@ namespace KoreanConjugator
                 }
                 else
                 {
-                    if (HangulUtil.Initial(current.First()).Equals(KoreanLetter.Ieung))
+                    if (HangulUtil.IsModernCompatibilityLetter(current.First()))
                     {
-                        // Apply vowel contraction.
-                        char result = HangulUtil.Contract(preceding.Last(), current.First());
+                        var composableFinal = HangulUtil.ToComposableFinal(current.First());
+                        var final = HangulUtil.FinalToIndex(composableFinal);
+                        int initial = HangulUtil.IndexOfInitial(preceding.Last());
+                        int medial = HangulUtil.IndexOfMedial(preceding.Last());
+                        char result = HangulUtil.Construct(initial, medial, final);
                         sb[sb.Length - 1] = result;
                         if (current.Length > 1)
                         {
@@ -282,13 +285,10 @@ namespace KoreanConjugator
                     }
                     else
                     {
-                        if (HangulUtil.IsModernCompatibilityLetter(current.First()))
+                        if (HangulUtil.CanContract(preceding.Last(), current.First()))
                         {
-                            var composableFinal = HangulUtil.ToComposableFinal(current.First());
-                            var final = HangulUtil.FinalToIndex(composableFinal);
-                            int initial = HangulUtil.IndexOfInitial(preceding.Last());
-                            int medial = HangulUtil.IndexOfMedial(preceding.Last());
-                            char result = HangulUtil.Construct(initial, medial, final);
+                            // Apply vowel contraction.
+                            char result = HangulUtil.Contract(preceding.Last(), current.First());
                             sb[sb.Length - 1] = result;
                             if (current.Length > 1)
                             {

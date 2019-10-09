@@ -57,7 +57,7 @@ namespace KoreanConjugator
 
         private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new Dictionary<Tuple<char, char>, char>
         {
-            { Tuple.Create('ㅏ', 'ㅏ'), 'ㅏ' },
+            { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
             { Tuple.Create('ㅓ', 'ㅓ'), 'ㅓ' },
             { Tuple.Create('ㅐ', 'ㅓ'), 'ㅐ' },
             { Tuple.Create('ㅏ', 'ㅣ'), 'ㅐ' },
@@ -247,6 +247,26 @@ namespace KoreanConjugator
             int characterCode = (initial * NumberOfMedials * NumberOfFinals) + (medial * NumberOfFinals) + final + FirstKoreanSyllableCharacterCode;
 
             return (char)characterCode;
+        }
+
+        public static char Construct(char initial, char medial, char final)
+        {
+            return Construct(
+                initial - FirstModernInitialCharacterCode,
+                medial - FirstModernMedialCharacterCode,
+                final - FirstModernFinalCharacterCode);
+        }
+
+        public static bool CanContract(char character1, char character2)
+        {
+            var medial1 = Medial(character1);
+            var medial2 = Medial(character2);
+            var key1 = Tuple.Create(medial1, medial2);
+            var key2 = Tuple.Create(character1, medial2);
+
+            return !IsModernCompatibilityLetter(character1) &&
+                KoreanLetter.Ieung.Equals(Initial(character2)) &&
+                (VowelContractionMap.ContainsKey(key1) || VowelContractionMap.ContainsKey(key2));
         }
 
         /// <summary>
