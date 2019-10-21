@@ -7,21 +7,23 @@ namespace KoreanConjugator
     /// </summary>
     public class AEuSuffixTemplate : SuffixTemplate
     {
+        private readonly bool pastTense;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AEuSuffixTemplate"/> class.
         /// </summary>
         /// <param name="text">The template text.</param>
         /// <param name="staticText">The portion of the template text that doesn't change.</param>
-        public AEuSuffixTemplate(string text, string staticText)
+        public AEuSuffixTemplate(string text, string staticText, bool pastTense)
             : base(text, staticText)
         {
+            this.pastTense = pastTense;
         }
 
         /// <inheritdoc/>
         public override string ChooseSuffixVariant(string precedingText)
         {
-            // TODO: Need to handle 았/었 too.
-            string connector = "어";
+            string connector = pastTense ? "었" : "어";
             int index = precedingText.Length - 1;
             while (index >= 0)
             {
@@ -30,7 +32,7 @@ namespace KoreanConjugator
                 {
                     if (medial == 'ᅡ' || medial == 'ᅩ')
                     {
-                        connector = "아";
+                        connector = pastTense ? "았" : "아";
                     }
 
                     break;

@@ -50,7 +50,7 @@ namespace KoreanConjugator
             }
             else
             {
-                if (HangulUtil.Final(precedingText.Last()) != 'ㄹ' && HangulUtil.HasFinal(precedingText.Last()))
+                if (HangulUtil.Final(precedingText.Last()) != 'ᆯ' && HangulUtil.HasFinal(precedingText.Last()))
                 {
                     // not == ㄹ
                     // Choose badchim connector

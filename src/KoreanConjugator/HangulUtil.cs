@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace KoreanConjugator
@@ -51,30 +52,114 @@ namespace KoreanConjugator
             .Zip(Finals, (k, v) => new { k, v })
             .ToDictionary(x => x.k, x => x.v);
 
-        private static readonly char[] Irregulars = { 'ㅅ', 'ㄷ', 'ㅂ', 'ㅡ', '르', 'ㄹ', 'ㅎ' };
+        private static readonly char[] Irregulars = { 'ᆺ', 'ᆮ', 'ᆸ', 'ᅳ', '르', 'ᆯ', 'ᇂ' };
 
-        private static readonly HashSet<string> IrregularExceptions = new HashSet<string>();
+        private static readonly HashSet<string> IrregularExceptions = new HashSet<string>
+        {
+            "따르",
+            "웃",
+            "벗",
+            "씻",
+            //"걷", Another meaning of 걷다 is to tuck, which is an exception.
+            "받",
+            "묻",
+            "닫",
+            "좁",
+            "잡",
+        };
+
+        private static HashSet<string> BieupRegularsThatLookIrregular { get; set; }
+
+        private static HashSet<string> SieutRegularsThatLookIrregular { get; set; }
+
+        private static HashSet<string> HieutRegularsThatLookIrregular { get; set; }
+
+        private static HashSet<string> DigeutRegularsThatLookIrregular { get; set; }
+
+        private static HashSet<string> LeuRegularsThatLookIrregular { get; set; }
 
         private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new Dictionary<Tuple<char, char>, char>
         {
             { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
-            { Tuple.Create('ㅓ', 'ㅓ'), 'ㅓ' },
-            { Tuple.Create('ㅐ', 'ㅓ'), 'ㅐ' },
-            { Tuple.Create('ㅏ', 'ㅣ'), 'ㅐ' },
-            { Tuple.Create('ㅓ', 'ㅣ'), 'ㅐ' },
-            { Tuple.Create('ㅑ', 'ㅣ'), 'ㅒ' },
-            { Tuple.Create('ㅔ', 'ㅓ'), 'ㅔ' },
-            { Tuple.Create('ㅗ', 'ㅏ'), 'ㅘ' },
-            { Tuple.Create('ㅜ', 'ㅓ'), 'ㅝ' },
-            { Tuple.Create('ㅚ', 'ㅓ'), 'ㅙ' },
-            { Tuple.Create('ㅡ', 'ㅏ'), 'ㅏ' },
-            { Tuple.Create('ㅡ', 'ㅓ'), 'ㅓ' },
-            { Tuple.Create('ㅏ', 'ㅡ'), 'ㅏ' },
-            { Tuple.Create('ㅓ', 'ㅡ'), 'ㅓ' },
-            { Tuple.Create('ㅣ', 'ㅓ'), 'ㅕ' },
-            { Tuple.Create('시', 'ㅓ'), '세' },
-            { Tuple.Create('하', 'ㅕ'), '해' },
+            { Tuple.Create('ᅥ', 'ᅥ'), 'ᅥ' },
+            { Tuple.Create('ᅢ', 'ᅥ'), 'ᅢ' },
+            { Tuple.Create('ᅡ', 'ᅵ'), 'ᅢ' },
+            { Tuple.Create('ᅥ', 'ᅵ'), 'ᅢ' },
+            { Tuple.Create('ᅣ', 'ᅵ'), 'ᅢ' },
+            { Tuple.Create('ᅦ', 'ᅥ'), 'ᅦ' },
+            { Tuple.Create('ᅩ', 'ᅡ'), 'ᅪ' },
+            { Tuple.Create('ᅮ', 'ᅥ'), 'ᅯ' },
+            { Tuple.Create('ᅮ', 'ᅳ'), 'ᅮ' },
+            { Tuple.Create('ᅬ', 'ᅥ'), 'ᅫ' },
+            { Tuple.Create('ᅳ', 'ᅡ'), 'ᅡ' },
+            { Tuple.Create('ᅳ', 'ᅥ'), 'ᅥ' },
+            { Tuple.Create('ᅡ', 'ᅳ'), 'ᅡ' },
+            { Tuple.Create('ᅥ', 'ᅳ'), 'ᅥ' },
+            { Tuple.Create('ᅵ', 'ᅥ'), 'ᅧ' },
+            { Tuple.Create('시', '요'), 'ᅦ' },
+            { Tuple.Create('하', 'ᅧ'), 'ᅢ' },
+            { Tuple.Create('ᅡ', 'ᅧ'), 'ᅢ' },
         };
+
+        public static readonly Dictionary<string, string> SpecialHonorificMap = new Dictionary<string, string>
+        {
+            { "먹", "들" },        // 잡수시다; 드시다
+            { "있", "계" },        // 계시다
+            { "자", "주무" },      // 주무시다
+            { "말하", "말씀하" },  // 말씀하시다
+            { "주", "드리" },      // Not 드리시다; when the receiver deserves hight respect
+
+            { "에게", "께" },
+            { "한테", "께" },
+            { "말", "말씀" },
+            { "보", "뵈" },       // or slightly even more formal 뵙.
+        };
+
+        public static void LoadRegularsThatLookIrregular()
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularsThatLookIrregular.txt");
+            string[] lines = File.ReadAllLines(path);
+            string text = File.ReadAllText(path);
+            string[] words = text.Split(',');
+            var exceptions = new HashSet<string>(words);
+
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                //int indexOfLastSyllableOfFirstWord = lines[i].IndexOf('l') - 1;
+                //char lastSyllableOfFirstWord = lines[i][indexOfLastSyllableOfFirstWord];
+                //char final = Final(lastSyllableOfFirstWord);
+                char firstCharOfLine = lines[i][0];
+
+                switch (firstCharOfLine)
+                {
+                    case 'ㅂ':
+                        lines[i] = lines[i].Remove(0, 2);
+                        BieupRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
+                        break;
+                    case 'ㅅ':
+                        lines[i] = lines[i].Remove(0, 2);
+                        SieutRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
+                        break;
+                    case 'ㄷ':
+                        lines[i] = lines[i].Remove(0, 2);
+                        DigeutRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
+                        break;
+                    case 'ㅎ':
+                        lines[i] = lines[i].Remove(0, 2);
+                        HieutRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
+                        break;
+                    case '르':
+                        lines[i] = lines[i].Remove(0, 2);
+                        LeuRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
+                        break;
+                }
+
+                if (lines[i][0].Equals('ㅂ'))
+                {
+                    lines[i] = lines[i].Remove(0, 2);
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the index of the Korean letter in the "Initial" position.
@@ -139,7 +224,7 @@ namespace KoreanConjugator
         {
             var finalOffset = IndexOfFinal(syllable);
 
-            return (char)(FirstModernFinalCharacterCode + finalOffset);
+            return (char)(FirstModernFinalCharacterCode + finalOffset - 1);
         }
 
         /// <summary>
@@ -251,10 +336,12 @@ namespace KoreanConjugator
 
         public static char Construct(char initial, char medial, char final)
         {
+            int indexOfFinal = final.Equals('\0') ? 0 : final - FirstModernFinalCharacterCode + 1;
+
             return Construct(
                 initial - FirstModernInitialCharacterCode,
                 medial - FirstModernMedialCharacterCode,
-                final - FirstModernFinalCharacterCode);
+                indexOfFinal);
         }
 
         public static bool CanContract(char character1, char character2)
@@ -277,12 +364,14 @@ namespace KoreanConjugator
         /// <returns>The contracted Korean syllable.</returns>
         public static char Contract(char syllable1, char syllable2)
         {
-            var medial2 = Medial(syllable2);
-
-            if (!VowelContractionMap.TryGetValue(Tuple.Create(syllable1, medial2), out char medial))
+            if (!VowelContractionMap.TryGetValue(Tuple.Create(syllable1, syllable2), out char medial))
             {
-                var medial1 = Medial(syllable1);
-                medial = VowelContractionMap[Tuple.Create(medial1, medial2)];
+                var medial2 = Medial(syllable2);
+                if (!VowelContractionMap.TryGetValue(Tuple.Create(syllable1, medial2), out medial))
+                {
+                    var medial1 = Medial(syllable1);
+                    medial = VowelContractionMap[Tuple.Create(medial1, medial2)];
+                }
             }
 
             return Construct(Initial(syllable1), medial, Final(syllable2));
@@ -300,8 +389,14 @@ namespace KoreanConjugator
                 throw new ArgumentException(nameof(verbStem));
             }
 
-            return IsSyllable(verbStem.Last()) &&
-                Irregulars.Contains(Final(verbStem.Last())) &&
+            bool hasIrregularForm =
+                Irregulars.Contains(Final(verbStem.Last())) ||
+                Irregulars.Contains(Medial(verbStem.Last())) ||
+                Irregulars.Contains(verbStem.Last());
+
+            return
+                IsSyllable(verbStem.Last()) &&
+                hasIrregularForm &&
                 !IrregularExceptions.Contains(verbStem);
         }
 

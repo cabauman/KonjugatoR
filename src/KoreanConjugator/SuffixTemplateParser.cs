@@ -13,6 +13,11 @@ namespace KoreanConjugator
         {
             // V/A + [ㄹ/을] 거
 
+            if (templateText.Contains("(아/어)") || templateText.Contains("(았/었)"))
+            {
+                return ParseAEuTemplate(templateText);
+            }
+
             string wordClass = "(?<WordClass>A/V|A|V)";
             string optionalWordClass = $"(?:{wordClass} \\+ )?";
             string noBadchim = "(?<NoBadchim>[ㅂ|ㄹ|ㄴ|ㅁ|가-힣])";
@@ -36,11 +41,6 @@ namespace KoreanConjugator
             var badchimConnector = match.Groups["Badchim"].Value;
             var staticText = match.Groups["StaticText"].Value;
 
-            if (badchimlessConnector.Equals("아") && badchimConnector.Equals("어"))
-            {
-                return new AEuSuffixTemplate(templateText, staticText);
-            }
-
             GroupCollection collection = match.Groups;
 
             // Note that group 0 is always the whole match
@@ -54,6 +54,32 @@ namespace KoreanConjugator
             var template = new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector, staticText);
 
             return template;
+        }
+
+        private SuffixTemplate ParseAEuTemplate(string templateText)
+        {
+            string wordClassGroup = "(?<WordClass>A/V|A|V) \\+ ";
+            string aGroup = "(?<AGroup>[아|았])";
+            string euGroup = "(?<EuGroup>[어|었])";
+            string aEuGroup = $"\\({aGroup}/{euGroup}\\)";
+            string staticTextGroup = "(?<StaticText>.*)";
+            string pattern = $"{wordClassGroup}{aEuGroup}{staticTextGroup}";
+
+            var regex = new Regex(pattern);
+            var match = regex.Match(templateText);
+
+            if (!match.Success)
+            {
+                throw new ArgumentException("Suffix doesn't match the template format.");
+            }
+
+            var wordClassResult = match.Groups["WordClass"].Value;
+            var aResult = match.Groups["AGroup"].Value;
+            var euResult = match.Groups["EuGroup"].Value;
+            var staticTextResult = match.Groups["StaticText"].Value;
+
+            var pastTense = aResult.Equals("았");
+            return new AEuSuffixTemplate(templateText, staticTextResult, pastTense);
         }
     }
 }
