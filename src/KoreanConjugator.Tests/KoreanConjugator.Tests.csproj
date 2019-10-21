@@ -18,4 +18,14 @@
     <ProjectReference Include="..\KoreanConjugator\KoreanConjugator.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\KoreanConjugator\Data\BothRegularAndIrregular.txt" Link="Data\BothRegularAndIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\KoreanConjugator\Data\RegularsThatLookIrregular.txt" Link="Data\RegularsThatLookIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\KoreanConjugator\Data\RegularIdaVerbs.txt" Link="Data\RegularIdaVerbs.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
 </Project>
