@@ -29,6 +29,14 @@ namespace KoreanConjugator.Tests
         [InlineData("푸", false, "퍼")]
         [InlineData("뵙", true, "뵈셔")]
         [InlineData("뵙", false, "봬")]
+        [InlineData("기다리", true, "기다리셔")]
+        [InlineData("기다리", false, "기다려")]
+        [InlineData("하", true, "하셔")]
+        [InlineData("하", false, "해")]
+        [InlineData("노랗", true, "노라셔")]
+        [InlineData("노랗", false, "노래")]
+        [InlineData("하얗", true, "하야셔")]
+        [InlineData("하얗", false, "하얘")]
         public void Should_ConjugateToPresentInformalLowDeclarative(string stem, bool honorific, string expected)
         {
             var sut = new Conjugator(new SuffixTemplateParser());
@@ -77,6 +85,8 @@ namespace KoreanConjugator.Tests
         [InlineData("가", false, "갔어")]
         [InlineData("읽", true, "읽으셨어")]
         [InlineData("읽", false, "읽었어")]
+        [InlineData("기다리", true, "기다리셨어")]
+        [InlineData("기다리", false, "기다렸어")]
         public void Should_ConjugateToPastInformalLowDeclarative(string stem, bool honorific, string expected)
         {
             var sut = new Conjugator(new SuffixTemplateParser());

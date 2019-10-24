@@ -17,7 +17,7 @@ namespace KoreanConjugator.Tests
         [InlineData('우', '어', '워')]
         [InlineData('해', '었', '했')]
         [InlineData('가', '았', '갔')]
-        [InlineData('시', '어', '세')]
+        [InlineData('시', '어', '셔')]
         [InlineData('하', '여', '해')]
         public void Should_Contract(char syllable1, char syllable2, char expected)
         {
