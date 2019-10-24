@@ -23,22 +23,31 @@ namespace KoreanConjugator
         /// <inheritdoc/>
         public override string ChooseSuffixVariant(string precedingText)
         {
-            string connector = pastTense ? "었" : "어";
-            int index = precedingText.Length - 1;
-            while (index >= 0)
+            string connector;
+            if (precedingText.Equals("하"))
             {
-                var medial = HangulUtil.Medial(precedingText[index]);
-                if (medial != 'ᅳ')
+                connector = pastTense ? "였" : "여";
+            }
+            else
+            {
+                connector = pastTense ? "었" : "어";
+
+                int index = precedingText.Length - 1;
+                while (index >= 0)
                 {
-                    if (medial == 'ᅡ' || medial == 'ᅩ')
+                    var medial = HangulUtil.Medial(precedingText[index]);
+                    if (medial != 'ᅳ')
                     {
-                        connector = pastTense ? "았" : "아";
+                        if (medial == 'ᅡ' || medial == 'ᅩ')
+                        {
+                            connector = pastTense ? "았" : "아";
+                        }
+
+                        break;
                     }
 
-                    break;
+                    --index;
                 }
-
-                --index;
             }
 
             return string.Concat(connector, StaticText);
