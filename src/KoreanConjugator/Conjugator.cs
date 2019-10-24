@@ -98,10 +98,18 @@ namespace KoreanConjugator
                 verbStem = honorificStem;
             }
 
-            var suffixes = ConvertParamsToSuffixes(conjugationParams);
-            ChooseSuffixesBasedOnPrecedingSyllable(verbStem, suffixes);
-            (var modifiedVerbStem, var hasHiddenBadchim) = ApplyIrregularVerbRules(verbStem, suffixes.First().First());
-            var conjugatedForm = MergeSyllablesFromLeftToRight(modifiedVerbStem, hasHiddenBadchim, suffixes);
+            var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
+            var suffixTemplate = GetSuffixTemplate(verbStem, suffixTemplateStrings[0]);
+            ApplyEdgeCaseLogic(ref verbStem, suffixTemplate);
+            var suffixes = ChooseSuffixesBasedOnPrecedingSyllable(verbStem, suffixTemplateStrings);
+
+            //processed, modified, etc.
+            var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixes.First().First());
+            var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
+            if (conjugationParams.Honorific && conjugatedForm.Contains("셔요"))
+            {
+                conjugatedForm = conjugatedForm.Replace("셔요", "세요");
+            }
 
             return new ConjugationResult(conjugatedForm, null);
         }
@@ -114,11 +122,13 @@ namespace KoreanConjugator
             if (string.IsNullOrEmpty(suffixTemplateString))
                 throw new ArgumentException(nameof(suffixTemplateString));
 
-            string suffixString = GetSuffix(verbStem, suffixTemplateString);
-            (var modifiedVerbStem, var hasHiddenBadchim) = ApplyIrregularVerbRules(verbStem, suffixString.First());
-            var conjugatedForm = Attach(modifiedVerbStem, suffixString, hasHiddenBadchim);
+            throw new NotImplementedException();
 
-            return new ConjugationResult(conjugatedForm, null);
+            //string suffixString = GetSuffix(verbStem, suffixTemplateString);
+            //var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
+            //var conjugatedForm = Attach(mutableVerbStem, suffixString);
+
+            //return new ConjugationResult(conjugatedForm, null);
         }
 
         public ConjugationResult AttachSuffixToNoun(string noun, string suffixTemplateString)
@@ -161,18 +171,21 @@ namespace KoreanConjugator
             return suffixes.ToArray();
         }
 
-        private void ChooseSuffixesBasedOnPrecedingSyllable(string verbStem, string[] suffixTemplateStrings)
+        private string[] ChooseSuffixesBasedOnPrecedingSyllable(string verbStem, string[] suffixTemplateStrings)
         {
-            suffixTemplateStrings[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
+            var suffixes = new string[suffixTemplateStrings.Length];
+            suffixes[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
 
             for (int i = 1; i < suffixTemplateStrings.Length; ++i)
             {
-                var preceding = suffixTemplateStrings[i - 1];
-                suffixTemplateStrings[i] = GetSuffix(preceding, suffixTemplateStrings[i]);
+                var preceding = suffixes[i - 1];
+                suffixes[i] = GetSuffix(preceding, suffixTemplateStrings[i]);
             }
+
+            return suffixes;
         }
 
-        private (string modifiedVerbStem, bool hasInvisibleBadchim) ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
+        private MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
         {
             bool hasHiddenBadchim = false;
             var sb = new StringBuilder(verbStem);
@@ -206,7 +219,8 @@ namespace KoreanConjugator
                             break;
                         case 'ᆸ':
                             // drop ㅂ, add 우/오.
-                            if ("돕곱".Any(x => x.Equals(lastSyllableOfVerbStem)) && "아어았었".Any(x => x.Equals(firstSyllableOfFirstSuffix)))
+                            if ((verbStem.Equals("묻잡") || "돕곱".Any(x => x.Equals(lastSyllableOfVerbStem))) &&
+                                "아어았었".Any(x => x.Equals(firstSyllableOfFirstSuffix)))
                             {
                                 valueToAppend = "오";
                             }
@@ -220,6 +234,11 @@ namespace KoreanConjugator
                         case 'ᇂ':
                             // drop ㅎ.
                             lastSyllableOfVerbStem = HangulUtil.DropFinal(lastSyllableOfVerbStem);
+                            if ("아어았었".Any(value => value == firstSyllableOfFirstSuffix))
+                            {
+                                lastSyllableOfVerbStem = HangulUtil.Contract(lastSyllableOfVerbStem, '이');
+                            }
+
                             break;
                         default:
                             break;
@@ -285,7 +304,20 @@ namespace KoreanConjugator
             sb[verbStem.Length - 1] = lastSyllableOfVerbStem;
             sb.Append(valueToAppend);
 
-            return (sb.ToString(), hasHiddenBadchim);
+            return new MutableVerbStem(sb.ToString(), hasHiddenBadchim);
+        }
+
+        private void ApplyEdgeCaseLogic(ref string verbStem, SuffixTemplate suffixTemplate)
+        {
+            var suffix = suffixTemplate.ChooseSuffixVariant(verbStem);
+            if (verbStem.Equals("뵙") && HangulUtil.Initial(suffix.First()).Equals('ᄋ'))
+            {
+                verbStem = "뵈";
+            }
+            else if (verbStem.Equals("푸") && HangulUtil.Initial(suffix.First()).Equals('ᄋ'))
+            {
+                verbStem = "퍼";
+            }
         }
 
         private string AttachToNoun(string text, string suffix)
@@ -319,19 +351,12 @@ namespace KoreanConjugator
             return sb.ToString();
         }
 
-        private string Attach(string text, string suffix, bool hasHiddenBadchim)
+        private void Attach(StringBuilder sb, string suffix)
         {
-            var sb = new StringBuilder();
-            sb.Append(text);
+            var lastSyllableOfSb = sb[sb.Length - 1];
 
-            if (/*i == 1 && */hasHiddenBadchim)
+            if (HangulUtil.HasFinal(lastSyllableOfSb))
             {
-                // Attach.
-                sb.Append(suffix);
-            }
-            else if (HangulUtil.HasFinal(text.Last()))
-            {
-                // Attach.
                 sb.Append(suffix);
             }
             else
@@ -340,8 +365,8 @@ namespace KoreanConjugator
                 {
                     var composableFinal = HangulUtil.ToComposableFinal(suffix.First());
                     var final = HangulUtil.FinalToIndex(composableFinal);
-                    int initial = HangulUtil.IndexOfInitial(text.Last());
-                    int medial = HangulUtil.IndexOfMedial(text.Last());
+                    int initial = HangulUtil.IndexOfInitial(lastSyllableOfSb);
+                    int medial = HangulUtil.IndexOfMedial(lastSyllableOfSb);
                     char result = HangulUtil.Construct(initial, medial, final);
                     sb[sb.Length - 1] = result;
                     if (suffix.Length > 1)
@@ -351,10 +376,10 @@ namespace KoreanConjugator
                 }
                 else
                 {
-                    if (HangulUtil.CanContract(text.Last(), suffix.First()))
+                    if (HangulUtil.CanContract(lastSyllableOfSb, suffix.First()))
                     {
                         // Apply vowel contraction.
-                        char result = HangulUtil.Contract(text.Last(), suffix.First());
+                        char result = HangulUtil.Contract(lastSyllableOfSb, suffix.First());
                         sb[sb.Length - 1] = result;
                         if (suffix.Length > 1)
                         {
@@ -367,68 +392,26 @@ namespace KoreanConjugator
                     }
                 }
             }
-
-            return string.Empty;
         }
 
-        private string MergeSyllablesFromLeftToRight(string verbStem, bool hasHiddenBadchim, string[] suffixes)
+        private string MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
         {
-            var textBlocks = new string[suffixes.Length + 1];
-            textBlocks[0] = verbStem;
-            suffixes.CopyTo(textBlocks, 1);
-
             var sb = new StringBuilder();
-            sb.Append(textBlocks[0]);
+            sb.Append(verbStem.Value);
 
-            for (int i = 1; i < textBlocks.Length; ++i)
+            if (verbStem.HasHiddenBadchim)
             {
-                var current = textBlocks[i];
-                var preceding = textBlocks[i - 1];
+                sb.Append(suffixes[0]);
+            }
+            else
+            {
+                Attach(sb, suffixes[0]);
+            }
 
-                // If the last syllable of the verb stem has an invisible badchim.
-                if (i == 1 && hasHiddenBadchim)
-                {
-                    // Attach.
-                    sb.Append(current);
-                }
-                else if (HangulUtil.HasFinal(preceding.Last()))
-                {
-                    // Attach.
-                    sb.Append(current);
-                }
-                else
-                {
-                    if (HangulUtil.IsModernCompatibilityLetter(current.First()))
-                    {
-                        var composableFinal = HangulUtil.ToComposableFinal(current.First());
-                        var final = HangulUtil.FinalToIndex(composableFinal);
-                        int initial = HangulUtil.IndexOfInitial(preceding.Last());
-                        int medial = HangulUtil.IndexOfMedial(preceding.Last());
-                        char result = HangulUtil.Construct(initial, medial, final);
-                        sb[sb.Length - 1] = result;
-                        if (current.Length > 1)
-                        {
-                            sb.Append(current.Substring(1));
-                        }
-                    }
-                    else
-                    {
-                        if (HangulUtil.CanContract(preceding.Last(), current.First()))
-                        {
-                            // Apply vowel contraction.
-                            char result = HangulUtil.Contract(preceding.Last(), current.First());
-                            sb[sb.Length - 1] = result;
-                            if (current.Length > 1)
-                            {
-                                sb.Append(current.Substring(1));
-                            }
-                        }
-                        else
-                        {
-                            sb.Append(current);
-                        }
-                    }
-                }
+            for (int i = 1; i < suffixes.Length; ++i)
+            {
+                var suffix = suffixes[i];
+                Attach(sb, suffix);
             }
 
             return sb.ToString();
@@ -437,6 +420,20 @@ namespace KoreanConjugator
         private string GetSuffix(string precedingText, string suffixTemplateString)
         {
             var suffixTemplate = suffixTemplateParser.Parse(suffixTemplateString);
+            var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
+
+            return suffixVariant;
+        }
+
+        private SuffixTemplate GetSuffixTemplate(string precedingText, string suffixTemplateString)
+        {
+            var suffixTemplate = suffixTemplateParser.Parse(suffixTemplateString);
+
+            return suffixTemplate;
+        }
+
+        private string GetSuffix(string precedingText, SuffixTemplate suffixTemplate)
+        {
             var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
 
             return suffixVariant;
