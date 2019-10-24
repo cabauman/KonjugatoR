@@ -58,12 +58,13 @@ namespace KoreanConjugator
 
         private SuffixTemplate ParseAEuTemplate(string templateText)
         {
-            string wordClassGroup = "(?<WordClass>A/V|A|V) \\+ ";
+            string wordClassGroup = "(?<WordClass>A/V|A|V)";
+            string optionalWordClassGroup = $"(?:{wordClassGroup} \\+ )?";
             string aGroup = "(?<AGroup>[아|았])";
             string euGroup = "(?<EuGroup>[어|었])";
             string aEuGroup = $"\\({aGroup}/{euGroup}\\)";
             string staticTextGroup = "(?<StaticText>.*)";
-            string pattern = $"{wordClassGroup}{aEuGroup}{staticTextGroup}";
+            string pattern = $"{optionalWordClassGroup}{aEuGroup}{staticTextGroup}";
 
             var regex = new Regex(pattern);
             var match = regex.Match(templateText);
