@@ -83,9 +83,12 @@ namespace KoreanConjugator
             { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
             { Tuple.Create('ᅥ', 'ᅥ'), 'ᅥ' },
             { Tuple.Create('ᅢ', 'ᅥ'), 'ᅢ' },
+            { Tuple.Create('ᅢ', 'ᅡ'), 'ᅢ' },
             { Tuple.Create('ᅡ', 'ᅵ'), 'ᅢ' },
             { Tuple.Create('ᅥ', 'ᅵ'), 'ᅢ' },
-            { Tuple.Create('ᅣ', 'ᅵ'), 'ᅢ' },
+            { Tuple.Create('ᅣ', 'ᅵ'), 'ᅤ' },
+            { Tuple.Create('ᅤ', 'ᅥ'), 'ᅤ' },
+            { Tuple.Create('ᅤ', 'ᅡ'), 'ᅤ' },
             { Tuple.Create('ᅦ', 'ᅥ'), 'ᅦ' },
             { Tuple.Create('ᅩ', 'ᅡ'), 'ᅪ' },
             { Tuple.Create('ᅮ', 'ᅥ'), 'ᅯ' },
@@ -95,9 +98,8 @@ namespace KoreanConjugator
             { Tuple.Create('ᅳ', 'ᅥ'), 'ᅥ' },
             { Tuple.Create('ᅡ', 'ᅳ'), 'ᅡ' },
             { Tuple.Create('ᅥ', 'ᅳ'), 'ᅥ' },
+            { Tuple.Create('ᅣ', 'ᅳ'), 'ᅣ' },
             { Tuple.Create('ᅵ', 'ᅥ'), 'ᅧ' },
-            { Tuple.Create('시', '요'), 'ᅦ' },
-            { Tuple.Create('하', 'ᅧ'), 'ᅢ' },
             { Tuple.Create('ᅡ', 'ᅧ'), 'ᅢ' },
         };
 
@@ -364,14 +366,12 @@ namespace KoreanConjugator
         /// <returns>The contracted Korean syllable.</returns>
         public static char Contract(char syllable1, char syllable2)
         {
-            if (!VowelContractionMap.TryGetValue(Tuple.Create(syllable1, syllable2), out char medial))
+            var medial1 = Medial(syllable1);
+            var medial2 = Medial(syllable2);
+            if (!VowelContractionMap.TryGetValue(Tuple.Create(medial1, medial2), out char medial))
             {
-                var medial2 = Medial(syllable2);
-                if (!VowelContractionMap.TryGetValue(Tuple.Create(syllable1, medial2), out medial))
-                {
-                    var medial1 = Medial(syllable1);
-                    medial = VowelContractionMap[Tuple.Create(medial1, medial2)];
-                }
+                throw new Exception($"Tried to contract {syllable1} and {syllable2} but" +
+                    "couldn't find a valid contraction.");
             }
 
             return Construct(Initial(syllable1), medial, Final(syllable2));
