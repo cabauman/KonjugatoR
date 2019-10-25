@@ -54,29 +54,11 @@ namespace KoreanConjugator
 
         private static readonly char[] Irregulars = { 'ᆺ', 'ᆮ', 'ᆸ', 'ᅳ', '르', 'ᆯ', 'ᇂ' };
 
-        private static readonly HashSet<string> IrregularExceptions = new HashSet<string>
-        {
-            "따르",
-            "웃",
-            "벗",
-            "씻",
-            //"걷", Another meaning of 걷다 is to tuck, which is an exception.
-            "받",
-            "묻",
-            "닫",
-            "좁",
-            "잡",
-        };
+        private static HashSet<string> IrregularExceptions;
 
-        private static HashSet<string> BieupRegularsThatLookIrregular { get; set; }
+        public static HashSet<string> RegularIdaVerbs;
 
-        private static HashSet<string> SieutRegularsThatLookIrregular { get; set; }
-
-        private static HashSet<string> HieutRegularsThatLookIrregular { get; set; }
-
-        private static HashSet<string> DigeutRegularsThatLookIrregular { get; set; }
-
-        private static HashSet<string> LeuRegularsThatLookIrregular { get; set; }
+        private static HashSet<string> BothRegularAndIrregular;
 
         private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new Dictionary<Tuple<char, char>, char>
         {
@@ -117,50 +99,27 @@ namespace KoreanConjugator
             { "보", "뵈" },       // or slightly even more formal 뵙.
         };
 
-        public static void LoadRegularsThatLookIrregular()
+        static HangulUtil()
+        {
+            LoadData();
+        }
+
+        public static void LoadData()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularsThatLookIrregular.txt");
-            string[] lines = File.ReadAllLines(path);
             string text = File.ReadAllText(path);
             string[] words = text.Split(',');
-            var exceptions = new HashSet<string>(words);
+            IrregularExceptions = new HashSet<string>(words);
 
-            for (int i = 0; i < lines.Length; ++i)
-            {
-                //int indexOfLastSyllableOfFirstWord = lines[i].IndexOf('l') - 1;
-                //char lastSyllableOfFirstWord = lines[i][indexOfLastSyllableOfFirstWord];
-                //char final = Final(lastSyllableOfFirstWord);
-                char firstCharOfLine = lines[i][0];
+            path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\BothRegularAndIrregular.txt");
+            text = File.ReadAllText(path);
+            words = text.Split(',');
+            BothRegularAndIrregular = new HashSet<string>(words);
 
-                switch (firstCharOfLine)
-                {
-                    case 'ㅂ':
-                        lines[i] = lines[i].Remove(0, 2);
-                        BieupRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
-                        break;
-                    case 'ㅅ':
-                        lines[i] = lines[i].Remove(0, 2);
-                        SieutRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
-                        break;
-                    case 'ㄷ':
-                        lines[i] = lines[i].Remove(0, 2);
-                        DigeutRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
-                        break;
-                    case 'ㅎ':
-                        lines[i] = lines[i].Remove(0, 2);
-                        HieutRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
-                        break;
-                    case '르':
-                        lines[i] = lines[i].Remove(0, 2);
-                        LeuRegularsThatLookIrregular = new HashSet<string>(lines[i].Split(','));
-                        break;
-                }
-
-                if (lines[i][0].Equals('ㅂ'))
-                {
-                    lines[i] = lines[i].Remove(0, 2);
-                }
-            }
+            path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularIdaVerbs.txt");
+            text = File.ReadAllText(path);
+            words = text.Split(',');
+            RegularIdaVerbs = new HashSet<string>(words);
         }
 
         /// <summary>

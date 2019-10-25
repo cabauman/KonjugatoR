@@ -99,19 +99,16 @@ namespace KoreanConjugator
             }
 
             var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
-            var suffixTemplate = GetSuffixTemplate(verbStem, suffixTemplateStrings[0]);
-            ApplyEdgeCaseLogic(ref verbStem, suffixTemplate);
-            var suffixes = ChooseSuffixesBasedOnPrecedingSyllable(verbStem, suffixTemplateStrings);
+            var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings.First());
+            var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
+            var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes.First().First());
 
-            //processed, modified, etc.
-            var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixes.First().First());
+            ApplyCopulaLogic(verbStem, conjugationParams, suffixes);
+
             var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
-            if (conjugationParams.Honorific && conjugatedForm.Contains("셔요"))
-            {
-                conjugatedForm = conjugatedForm.Replace("셔요", "세요");
-            }
+            var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
 
-            return new ConjugationResult(conjugatedForm, null);
+            return new ConjugationResult(finalForm, null);
         }
 
         /// <inheritdoc/>
@@ -122,13 +119,12 @@ namespace KoreanConjugator
             if (string.IsNullOrEmpty(suffixTemplateString))
                 throw new ArgumentException(nameof(suffixTemplateString));
 
-            throw new NotImplementedException();
+            verbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateString);
+            var suffixString = GetSuffix(verbStem, suffixTemplateString);
+            var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
+            var conjugatedForm = Attach(mutableVerbStem, suffixString);
 
-            //string suffixString = GetSuffix(verbStem, suffixTemplateString);
-            //var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
-            //var conjugatedForm = Attach(mutableVerbStem, suffixString);
-
-            //return new ConjugationResult(conjugatedForm, null);
+            return new ConjugationResult(conjugatedForm, null);
         }
 
         public ConjugationResult AttachSuffixToNoun(string noun, string suffixTemplateString)
@@ -171,7 +167,7 @@ namespace KoreanConjugator
             return suffixes.ToArray();
         }
 
-        private string[] ChooseSuffixesBasedOnPrecedingSyllable(string verbStem, string[] suffixTemplateStrings)
+        private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)
         {
             var suffixes = new string[suffixTemplateStrings.Length];
             suffixes[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
@@ -307,8 +303,9 @@ namespace KoreanConjugator
             return new MutableVerbStem(sb.ToString(), hasHiddenBadchim);
         }
 
-        private void ApplyEdgeCaseLogic(ref string verbStem, SuffixTemplate suffixTemplate)
+        private string ApplyVerbStemEdgeCaseLogic(string verbStem, string suffixTemplateString)
         {
+            var suffixTemplate = GetSuffixTemplate(verbStem, suffixTemplateString);
             var suffix = suffixTemplate.ChooseSuffixVariant(verbStem);
             if (verbStem.Equals("뵙") && HangulUtil.Initial(suffix.First()).Equals('ᄋ'))
             {
@@ -318,6 +315,36 @@ namespace KoreanConjugator
             {
                 verbStem = "퍼";
             }
+
+            return verbStem;
+        }
+
+        private void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixes)
+        {
+            if (conjugationParams.Tense == Tense.Present &&
+                !conjugationParams.Honorific &&
+                !HangulUtil.RegularIdaVerbs.Contains(verbStem) &&
+                (verbStem.EndsWith("이") || verbStem.Equals("아니")))
+            {
+                if (conjugationParams.Formality == Formality.InformalLow)
+                {
+                    suffixes[0] = "야";
+                }
+                else if (conjugationParams.Formality == Formality.InformalHigh)
+                {
+                    suffixes[0] = "에요";
+                }
+            }
+        }
+
+        private string ApplyConjugatedFormEdgeCaseLogic(string conjugatedForm, bool isHonorific)
+        {
+            if (isHonorific && conjugatedForm.Contains("셔요"))
+            {
+                conjugatedForm = conjugatedForm.Replace("셔요", "세요");
+            }
+
+            return conjugatedForm;
         }
 
         private string AttachToNoun(string text, string suffix)
@@ -394,10 +421,25 @@ namespace KoreanConjugator
             }
         }
 
+        private string Attach(MutableVerbStem verbStem, string suffix)
+        {
+            var sb = new StringBuilder(verbStem.Value);
+
+            if (verbStem.HasHiddenBadchim)
+            {
+                sb.Append(suffix);
+            }
+            else
+            {
+                Attach(sb, suffix);
+            }
+
+            return sb.ToString();
+        }
+
         private string MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
         {
-            var sb = new StringBuilder();
-            sb.Append(verbStem.Value);
+            var sb = new StringBuilder(verbStem.Value);
 
             if (verbStem.HasHiddenBadchim)
             {
