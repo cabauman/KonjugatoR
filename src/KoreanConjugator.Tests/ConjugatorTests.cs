@@ -666,13 +666,10 @@ namespace KoreanConjugator.Tests
         }
 
         [Theory]
-        [InlineData("먹", true, "드셔라")]
-        [InlineData("먹", false, "먹어라")]
-        [InlineData("가", true, "가셔라")]
-        [InlineData("가", false, "가라")]
-        [InlineData("읽", true, "읽으셔라")]
-        [InlineData("읽", false, "읽어라")]
-        public void Should_ConjugateToPresentFormalLowImperative(string stem, bool honorific, string expected)
+        [InlineData("먹", "먹어라")]
+        [InlineData("가", "가라")]
+        [InlineData("읽", "읽어라")]
+        public void Should_ConjugateToPresentFormalLowImperative(string stem, string expected)
         {
             var sut = new Conjugator(new SuffixTemplateParser());
 
@@ -680,7 +677,7 @@ namespace KoreanConjugator.Tests
             {
                 ClauseType = ClauseType.Imperative,
                 Formality = Formality.FormalLow,
-                Honorific = honorific,
+                Honorific = false,
                 Tense = Tense.Present,
                 WordClass = WordClass.Verb,
             };

@@ -12,21 +12,5 @@
         /// <param name="conjugationParams">The params used to specify the conjugated form.</param>
         /// <returns>A conjugation result.</returns>
         ConjugationResult Conjugate(string verbStem, ConjugationParams conjugationParams);
-
-        /// <summary>
-        /// Attaches a suffix to a verb stem.
-        /// </summary>
-        /// <param name="verbStem">A verb stem.</param>
-        /// <param name="suffixTemplateString">A suffix template string.</param>
-        /// <returns>A conjugation result.</returns>
-        ConjugationResult AttachSuffixToVerb(string verbStem, string suffixTemplateString);
-
-        /// <summary>
-        /// Attaches a suffix to a noun.
-        /// </summary>
-        /// <param name="noun">A noun.</param>
-        /// <param name="suffixTemplateString">The suffix template string.</param>
-        /// <returns>A conjugation result.</returns>
-        ConjugationResult AttachSuffixToNoun(string noun, string suffixTemplateString);
     }
 }

@@ -10,72 +10,6 @@ namespace KoreanConjugator
     /// </summary>
     public class Conjugator : IConjugator
     {
-        private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map =
-            new Dictionary<Tuple<Tense, Formality, ClauseType>, string>
-        {
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Declarative),      ",다" },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Interrogative),    ",냐?" },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Declarative),      "어,요" },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Interrogative),    "어,요?" },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Declarative),      "어," },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Interrogative),    "어,?" },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Propositive),      "," },
-
-
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Imperative),       "(ㅂ/습),시오" },
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Propositive),      "(ㅂ/읍),시다" },
-
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Declarative),      "(ㄴ/는),다" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Imperative),       "(아/어),라" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Interrogative),    ",나?" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Propositive),      ",자" },
-
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Declarative),      "(아/어),요" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Imperative),       "(아/어),요" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Interrogative),    "(아/어),요?" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Propositive),      "(아/어),요" },
-
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Declarative),      "(아/어)," },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Imperative),       "(아/어)," },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Interrogative),    "(아/어),?" },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Propositive),      "(아/어)," },
-
-
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Declarative),      ",다" },
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Interrogative),    ",냐?" }, // TODO
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Declarative),      "예,요" },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Interrogative),    "예,요?" },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Declarative),      "야," },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Interrogative),    "야,?" },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Propositive),      "," },
-        };
-
         private readonly ISuffixTemplateParser suffixTemplateParser;
 
         /// <summary>
@@ -93,78 +27,21 @@ namespace KoreanConjugator
             if (string.IsNullOrEmpty(nameof(verbStem)))
                 throw new ArgumentException(verbStem);
 
+            var templateListProvider = new ConjugationSuffixTemplateListProvider();
+
             if (conjugationParams.Honorific && HangulUtil.SpecialHonorificMap.TryGetValue(verbStem, out var honorificStem))
             {
                 verbStem = honorificStem;
             }
 
-            var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
+            var suffixTemplateStrings = templateListProvider.Get(verbStem, conjugationParams);
             var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings.First());
             var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
             var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes.First().First());
-
-            ApplyCopulaLogic(verbStem, conjugationParams, suffixes);
-
             var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
             var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
 
             return new ConjugationResult(finalForm, null);
-        }
-
-        /// <inheritdoc/>
-        public ConjugationResult AttachSuffixToVerb(string verbStem, string suffixTemplateString)
-        {
-            if (string.IsNullOrEmpty(verbStem))
-                throw new ArgumentException(nameof(verbStem));
-            if (string.IsNullOrEmpty(suffixTemplateString))
-                throw new ArgumentException(nameof(suffixTemplateString));
-
-            verbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateString);
-            var suffixString = GetSuffix(verbStem, suffixTemplateString);
-            var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
-            var conjugatedForm = Attach(mutableVerbStem, suffixString);
-
-            return new ConjugationResult(conjugatedForm, null);
-        }
-
-        public ConjugationResult AttachSuffixToNoun(string noun, string suffixTemplateString)
-        {
-            if (string.IsNullOrEmpty(noun))
-                throw new ArgumentException(nameof(noun));
-            if (string.IsNullOrEmpty(suffixTemplateString))
-                throw new ArgumentException(nameof(suffixTemplateString));
-
-            string suffixString = GetSuffix(noun, suffixTemplateString);
-            var result = AttachToNoun(noun, suffixString);
-
-            return new ConjugationResult(result, null);
-        }
-
-        private string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
-        {
-            var suffixes = new List<string>();
-
-            if (conjugationParams.Honorific)
-            {
-                suffixes.Add("(으)시");
-            }
-
-            switch (conjugationParams.Tense)
-            {
-                case Tense.Future:
-                    suffixes.Add("(ㄹ/을) 거");
-                    break;
-                case Tense.Past:
-                    suffixes.Add("(았/었)");
-                    break;
-                case Tense.Present:
-                    break;
-            }
-
-            var key = Tuple.Create(conjugationParams.Tense, conjugationParams.Formality, conjugationParams.ClauseType);
-            suffixes.AddRange(Map[key].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
-
-            return suffixes.ToArray();
         }
 
         private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)
@@ -305,8 +182,7 @@ namespace KoreanConjugator
 
         private string ApplyVerbStemEdgeCaseLogic(string verbStem, string suffixTemplateString)
         {
-            var suffixTemplate = GetSuffixTemplate(verbStem, suffixTemplateString);
-            var suffix = suffixTemplate.ChooseSuffixVariant(verbStem);
+            var suffix = GetSuffix(verbStem, suffixTemplateString);
             if (verbStem.Equals("뵙") && HangulUtil.Initial(suffix.First()).Equals('ᄋ'))
             {
                 verbStem = "뵈";
@@ -319,24 +195,6 @@ namespace KoreanConjugator
             return verbStem;
         }
 
-        private void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixes)
-        {
-            if (conjugationParams.Tense == Tense.Present &&
-                !conjugationParams.Honorific &&
-                !HangulUtil.RegularIdaVerbs.Contains(verbStem) &&
-                (verbStem.EndsWith("이") || verbStem.Equals("아니")))
-            {
-                if (conjugationParams.Formality == Formality.InformalLow)
-                {
-                    suffixes[0] = "야";
-                }
-                else if (conjugationParams.Formality == Formality.InformalHigh)
-                {
-                    suffixes[0] = "에요";
-                }
-            }
-        }
-
         private string ApplyConjugatedFormEdgeCaseLogic(string conjugatedForm, bool isHonorific)
         {
             if (isHonorific && conjugatedForm.Contains("셔요"))
@@ -345,37 +203,6 @@ namespace KoreanConjugator
             }
 
             return conjugatedForm;
-        }
-
-        private string AttachToNoun(string text, string suffix)
-        {
-            var sb = new StringBuilder();
-            sb.Append(text);
-
-            if (HangulUtil.HasFinal(text.Last()))
-            {
-                // Attach.
-                sb.Append(suffix);
-            }
-            else
-            {
-                if (HangulUtil.CanContract(text.Last(), suffix.First()))
-                {
-                    // Apply vowel contraction.
-                    char result = HangulUtil.Contract(text.Last(), suffix.First());
-                    sb[sb.Length - 1] = result;
-                    if (suffix.Length > 1)
-                    {
-                        sb.Append(suffix.Substring(1));
-                    }
-                }
-                else
-                {
-                    sb.Append(suffix);
-                }
-            }
-
-            return sb.ToString();
         }
 
         private void Attach(StringBuilder sb, string suffix)
@@ -421,22 +248,6 @@ namespace KoreanConjugator
             }
         }
 
-        private string Attach(MutableVerbStem verbStem, string suffix)
-        {
-            var sb = new StringBuilder(verbStem.Value);
-
-            if (verbStem.HasHiddenBadchim)
-            {
-                sb.Append(suffix);
-            }
-            else
-            {
-                Attach(sb, suffix);
-            }
-
-            return sb.ToString();
-        }
-
         private string MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
         {
             var sb = new StringBuilder(verbStem.Value);
@@ -462,20 +273,6 @@ namespace KoreanConjugator
         private string GetSuffix(string precedingText, string suffixTemplateString)
         {
             var suffixTemplate = suffixTemplateParser.Parse(suffixTemplateString);
-            var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
-
-            return suffixVariant;
-        }
-
-        private SuffixTemplate GetSuffixTemplate(string precedingText, string suffixTemplateString)
-        {
-            var suffixTemplate = suffixTemplateParser.Parse(suffixTemplateString);
-
-            return suffixTemplate;
-        }
-
-        private string GetSuffix(string precedingText, SuffixTemplate suffixTemplate)
-        {
             var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
 
             return suffixVariant;
