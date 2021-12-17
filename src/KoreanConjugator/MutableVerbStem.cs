@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace KoreanConjugator
+namespace KoreanConjugator;
+
+public class MutableVerbStem
 {
-    public class MutableVerbStem
+    public MutableVerbStem(string value, bool hasHiddenBadchim)
     {
-        public MutableVerbStem(string value, bool hasHiddenBadchim)
-        {
-            Value = value;
-            HasHiddenBadchim = hasHiddenBadchim;
-        }
-
-        public string Value { get; }
-
-        public bool HasHiddenBadchim { get; }
+        Value = value;
+        HasHiddenBadchim = hasHiddenBadchim;
     }
+
+    public string Value { get; }
+
+    public bool HasHiddenBadchim { get; }
 }

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KoreanConjugator
+namespace KoreanConjugator;
+
+/// <summary>
+/// Represents a utility that provides a list of suffix templates required for conjugation.
+/// </summary>
+public class ConjugationSuffixTemplateListProvider
 {
-    /// <summary>
-    /// Represents a utility that provides a list of suffix templates required for conjugation.
-    /// </summary>
-    public class ConjugationSuffixTemplateListProvider
+    private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map =
+        new Dictionary<Tuple<Tense, Formality, ClauseType>, string>
     {
-        private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map =
-            new Dictionary<Tuple<Tense, Formality, ClauseType>, string>
-        {
             { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
             { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Imperative),       "," },
             { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
@@ -61,61 +61,60 @@ namespace KoreanConjugator
             { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Imperative),       "," },
             { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Interrogative),    "야,?" },
             { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Propositive),      "," },
-        };
+    };
 
-        public string[] Get(string verbStem, ConjugationParams conjugationParams)
+    public string[] Get(string verbStem, ConjugationParams conjugationParams)
+    {
+        if (string.IsNullOrEmpty(nameof(verbStem)))
+            throw new ArgumentException(verbStem);
+
+        var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
+        ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings);
+
+        return suffixTemplateStrings;
+    }
+
+    private string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
+    {
+        var suffixes = new List<string>();
+
+        if (conjugationParams.Honorific)
         {
-            if (string.IsNullOrEmpty(nameof(verbStem)))
-                throw new ArgumentException(verbStem);
-
-            var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
-            ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings);
-
-            return suffixTemplateStrings;
+            suffixes.Add("(으)시");
         }
 
-        private string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
+        switch (conjugationParams.Tense)
         {
-            var suffixes = new List<string>();
-
-            if (conjugationParams.Honorific)
-            {
-                suffixes.Add("(으)시");
-            }
-
-            switch (conjugationParams.Tense)
-            {
-                case Tense.Future:
-                    suffixes.Add("(ㄹ/을) 거");
-                    break;
-                case Tense.Past:
-                    suffixes.Add("(았/었)");
-                    break;
-                case Tense.Present:
-                    break;
-            }
-
-            var key = Tuple.Create(conjugationParams.Tense, conjugationParams.Formality, conjugationParams.ClauseType);
-            suffixes.AddRange(Map[key].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
-
-            return suffixes.ToArray();
+            case Tense.Future:
+                suffixes.Add("(ㄹ/을) 거");
+                break;
+            case Tense.Past:
+                suffixes.Add("(았/었)");
+                break;
+            case Tense.Present:
+                break;
         }
 
-        private void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixTemplateStrings)
+        var key = Tuple.Create(conjugationParams.Tense, conjugationParams.Formality, conjugationParams.ClauseType);
+        suffixes.AddRange(Map[key].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+        return suffixes.ToArray();
+    }
+
+    private void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixTemplateStrings)
+    {
+        if (conjugationParams.Tense == Tense.Present &&
+            !conjugationParams.Honorific &&
+            !HangulUtil.RegularIdaVerbs.Contains(verbStem) &&
+            (verbStem.EndsWith("이") || verbStem.Equals("아니")))
         {
-            if (conjugationParams.Tense == Tense.Present &&
-                !conjugationParams.Honorific &&
-                !HangulUtil.RegularIdaVerbs.Contains(verbStem) &&
-                (verbStem.EndsWith("이") || verbStem.Equals("아니")))
+            if (conjugationParams.Formality == Formality.InformalLow)
             {
-                if (conjugationParams.Formality == Formality.InformalLow)
-                {
-                    suffixTemplateStrings[0] = "야";
-                }
-                else if (conjugationParams.Formality == Formality.InformalHigh)
-                {
-                    suffixTemplateStrings[0] = "에";
-                }
+                suffixTemplateStrings[0] = "야";
+            }
+            else if (conjugationParams.Formality == Formality.InformalHigh)
+            {
+                suffixTemplateStrings[0] = "에";
             }
         }
     }

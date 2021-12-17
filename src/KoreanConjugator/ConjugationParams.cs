@@ -1,33 +1,32 @@
-﻿namespace KoreanConjugator
+﻿namespace KoreanConjugator;
+
+/// <summary>
+/// Represents a set of params used to specify the desired conjugation form.
+/// </summary>
+public struct ConjugationParams
 {
     /// <summary>
-    /// Represents a set of params used to specify the desired conjugation form.
+    /// Gets or sets the world class.
     /// </summary>
-    public struct ConjugationParams
-    {
-        /// <summary>
-        /// Gets or sets the world class.
-        /// </summary>
-        public WordClass WordClass { get; set; }
+    public WordClass WordClass { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the conjugation should use honorific form.
-        /// </summary>
-        public bool Honorific { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether the conjugation should use honorific form.
+    /// </summary>
+    public bool Honorific { get; set; }
 
-        /// <summary>
-        /// Gets or sets the tense.
-        /// </summary>
-        public Tense Tense { get; set; }
+    /// <summary>
+    /// Gets or sets the tense.
+    /// </summary>
+    public Tense Tense { get; set; }
 
-        /// <summary>
-        /// Gets or sets the formality.
-        /// </summary>
-        public Formality Formality { get; set; }
+    /// <summary>
+    /// Gets or sets the formality.
+    /// </summary>
+    public Formality Formality { get; set; }
 
-        /// <summary>
-        /// Gets or sets the clause type.
-        /// </summary>
-        public ClauseType ClauseType { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the clause type.
+    /// </summary>
+    public ClauseType ClauseType { get; set; }
 }
