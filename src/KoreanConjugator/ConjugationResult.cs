@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace KoreanConjugator;
+﻿namespace KoreanConjugator;
 
 /// <summary>
 /// Represents the result of a conjugation.

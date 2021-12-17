@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace KoreanConjugator;
+﻿namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a suffix template that starts with the 아/어 grammatical principal.

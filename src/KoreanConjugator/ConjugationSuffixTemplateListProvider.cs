@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace KoreanConjugator;
+﻿namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a utility that provides a list of suffix templates required for conjugation.

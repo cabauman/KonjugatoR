@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace KoreanConjugator;
+﻿namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a template where the suffix variant depends on whether or not the preceding text ends with a badchim.

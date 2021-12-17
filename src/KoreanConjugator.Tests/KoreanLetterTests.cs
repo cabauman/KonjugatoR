@@ -1,5 +1,4 @@
-﻿using KoreanConjugator;
-using Xunit;
+﻿using Xunit;
 
 namespace KoreanConjugator.Tests;
 
