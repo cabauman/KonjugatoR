@@ -95,17 +95,17 @@ public static class HangulUtil
     /// <summary>
     /// Gets the regular 이다 verbs.
     /// </summary>
-    public static HashSet<string> RegularIdaVerbs { get; private set; }
+    public static HashSet<string>? RegularIdaVerbs { get; private set; }
 
     /// <summary>
     /// Gets words that look irregular but actually aren't.
     /// </summary>
-    public static HashSet<string> IrregularExceptions { get; private set; }
+    public static HashSet<string>? IrregularExceptions { get; private set; }
 
     /// <summary>
     /// Gets words that are both regular and irregular.
     /// </summary>
-    public static HashSet<string> BothRegularAndIrregular { get; private set; }
+    public static HashSet<string>? BothRegularAndIrregular { get; private set; }
 
     /// <summary>
     /// Gets the index of the Korean letter in the "Initial" position.
@@ -354,6 +354,7 @@ public static class HangulUtil
         return
             IsSyllable(verbStem.Last()) &&
             hasIrregularForm &&
+            IrregularExceptions != null &&
             !IrregularExceptions.Contains(verbStem);
     }
 
@@ -417,7 +418,7 @@ public static class HangulUtil
     /// </summary>
     /// <param name="verbStem">The verb stem.</param>
     /// <returns>The honorific form of he verb stem, if one exists; otherwise, <c>null</c>.</returns>
-    public static string GetSpecialHonorificForm(string verbStem)
+    public static string? GetSpecialHonorificForm(string verbStem)
     {
         SpecialHonorificMap.TryGetValue(verbStem, out var honorificStem);
         return honorificStem;

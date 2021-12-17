@@ -261,7 +261,7 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
     public bool Equals(int i) => CharacterCode == i;
 
     /// <inheritdoc/>
-    public override bool Equals(object obj) => obj is KoreanLetter koreanLetter && Equals(koreanLetter);
+    public override bool Equals(object? obj) => obj is KoreanLetter koreanLetter && Equals(koreanLetter);
 
     /// <inheritdoc/>
     public override int GetHashCode() => CharacterCode.GetHashCode();
@@ -287,9 +287,9 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
     }
 
     /// <inheritdoc/>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        format = format.Replace("H", ((char)CharacterCode).ToString());
+        format = format?.Replace("H", ((char)CharacterCode).ToString()) ?? ((char)CharacterCode).ToString();
 
         return format;
     }

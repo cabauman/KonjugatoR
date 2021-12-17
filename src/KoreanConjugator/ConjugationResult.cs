@@ -5,10 +5,11 @@
 /// </summary>
 public readonly struct ConjugationResult
 {
-    internal ConjugationResult(string value, List<string> steps)
+    internal ConjugationResult(string value, IReadOnlyList<string> steps)
     {
         Value = value;
         Steps = steps;
+        // TODO: Use this value or get rid of it.
         Type = null;
     }
 
@@ -20,10 +21,10 @@ public readonly struct ConjugationResult
     /// <summary>
     /// Gets the list of steps that the conjugator took to get the resulting value.
     /// </summary>
-    public IEnumerable<string> Steps { get; }
+    public IReadOnlyList<string> Steps { get; }
 
     /// <summary>
     /// Gets whether the verb or adjective is regular or irregular.
     /// </summary>
-    public string Type { get; }
+    public string? Type { get; }
 }

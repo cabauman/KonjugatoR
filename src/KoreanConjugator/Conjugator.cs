@@ -41,7 +41,7 @@ public class Conjugator : IConjugator
         var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
         var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
 
-        return new ConjugationResult(finalForm, null);
+        return new ConjugationResult(finalForm, Array.Empty<string>());
     }
 
     private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)

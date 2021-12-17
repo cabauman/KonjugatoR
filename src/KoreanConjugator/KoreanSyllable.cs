@@ -198,7 +198,7 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
     public bool Equals(int i) => CharacterCode == i;
 
     /// <inheritdoc/>
-    public override bool Equals(object obj) => obj is KoreanSyllable koreanSyllable && Equals(koreanSyllable);
+    public override bool Equals(object? obj) => obj is KoreanSyllable koreanSyllable && Equals(koreanSyllable);
 
     /// <inheritdoc/>
     public override int GetHashCode() => CharacterCode.GetHashCode();
@@ -224,9 +224,9 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
     }
 
     /// <inheritdoc/>
-    public string ToString(string format, IFormatProvider formatProvider)
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        format = format.Replace("S", ((char)CharacterCode).ToString());
+        format = format?.Replace("S", ((char)CharacterCode).ToString()) ?? ((char)CharacterCode).ToString();
 
         return format;
     }
