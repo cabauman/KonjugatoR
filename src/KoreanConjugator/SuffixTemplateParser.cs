@@ -11,7 +11,6 @@ public class SuffixTemplateParser : ISuffixTemplateParser
     public SuffixTemplate Parse(string templateText)
     {
         // V/A + [ㄹ/을] 거
-
         if (templateText.Contains("(아/어)") || templateText.Contains("(았/었)"))
         {
             return ParseAEuTemplate(templateText);
@@ -73,6 +72,7 @@ public class SuffixTemplateParser : ISuffixTemplateParser
             throw new ArgumentException("Suffix doesn't match the template format.");
         }
 
+        // TODO: Either use or get rid of these assinments.
         var wordClassResult = match.Groups["WordClass"].Value;
         var aResult = match.Groups["AGroup"].Value;
         var euResult = match.Groups["EuGroup"].Value;

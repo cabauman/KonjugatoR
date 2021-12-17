@@ -9,77 +9,78 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
 {
     #region Instantiation Shortcuts
 
-    public static readonly KoreanLetter None = new KoreanLetter(-1);
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    public static readonly KoreanLetter None = new (-1);
+    public static readonly KoreanLetter Giyeok = new ('ᄀ');
+    public static readonly KoreanLetter SsangGiyeok = new ('ᄁ');
+    public static readonly KoreanLetter Nieun = new ('ᄂ');
+    public static readonly KoreanLetter Digeut = new ('ᄃ');
+    public static readonly KoreanLetter SsangDigeut = new ('ᄄ');
+    public static readonly KoreanLetter Rieul = new ('ᄅ');
+    public static readonly KoreanLetter Mieum = new ('ᄆ');
+    public static readonly KoreanLetter Bieup = new ('ᄇ');
+    public static readonly KoreanLetter SsangBieup = new ('ᄈ');
+    public static readonly KoreanLetter Shiot = new ('ᄉ');
+    public static readonly KoreanLetter SsangShiot = new ('ᄊ');
+    public static readonly KoreanLetter Ieung = new ('ᄋ');
+    public static readonly KoreanLetter Jieut = new ('ᄌ');
+    public static readonly KoreanLetter SsangJieut = new ('ᄍ');
+    public static readonly KoreanLetter Chieut = new ('ᄎ');
+    public static readonly KoreanLetter Kieuk = new ('ᄏ');
+    public static readonly KoreanLetter Tieut = new ('ᄐ');
+    public static readonly KoreanLetter Pieup = new ('ᄑ');
+    public static readonly KoreanLetter Hieut = new ('ᄒ');
 
-    public static readonly KoreanLetter Giyeok = new KoreanLetter('ᄀ');
-    public static readonly KoreanLetter SsangGiyeok = new KoreanLetter('ᄁ');
-    public static readonly KoreanLetter Nieun = new KoreanLetter('ᄂ');
-    public static readonly KoreanLetter Digeut = new KoreanLetter('ᄃ');
-    public static readonly KoreanLetter SsangDigeut = new KoreanLetter('ᄄ');
-    public static readonly KoreanLetter Rieul = new KoreanLetter('ᄅ');
-    public static readonly KoreanLetter Mieum = new KoreanLetter('ᄆ');
-    public static readonly KoreanLetter Bieup = new KoreanLetter('ᄇ');
-    public static readonly KoreanLetter SsangBieup = new KoreanLetter('ᄈ');
-    public static readonly KoreanLetter Shiot = new KoreanLetter('ᄉ');
-    public static readonly KoreanLetter SsangShiot = new KoreanLetter('ᄊ');
-    public static readonly KoreanLetter Ieung = new KoreanLetter('ᄋ');
-    public static readonly KoreanLetter Jieut = new KoreanLetter('ᄌ');
-    public static readonly KoreanLetter SsangJieut = new KoreanLetter('ᄍ');
-    public static readonly KoreanLetter Chieut = new KoreanLetter('ᄎ');
-    public static readonly KoreanLetter Kieuk = new KoreanLetter('ᄏ');
-    public static readonly KoreanLetter Tieut = new KoreanLetter('ᄐ');
-    public static readonly KoreanLetter Pieup = new KoreanLetter('ᄑ');
-    public static readonly KoreanLetter Hieut = new KoreanLetter('ᄒ');
+    public static readonly KoreanLetter A = new ('ᅡ');
+    public static readonly KoreanLetter Ae = new ('ᅢ');
+    public static readonly KoreanLetter Ya = new ('ᅣ');
+    public static readonly KoreanLetter Yae = new ('ᅤ');
+    public static readonly KoreanLetter Eo = new ('ᅥ');
+    public static readonly KoreanLetter E = new ('ᅦ');
+    public static readonly KoreanLetter Yeo = new ('ᅧ');
+    public static readonly KoreanLetter Ye = new ('ᅨ');
+    public static readonly KoreanLetter O = new ('ᅩ');
+    public static readonly KoreanLetter Wa = new ('ᅪ');
+    public static readonly KoreanLetter Wae = new ('ᅫ');
+    public static readonly KoreanLetter Oe = new ('ᅬ');
+    public static readonly KoreanLetter Yo = new ('ᅭ');
+    public static readonly KoreanLetter U = new ('ᅮ');
+    public static readonly KoreanLetter Wo = new ('ᅯ');
+    public static readonly KoreanLetter We = new ('ᅰ');
+    public static readonly KoreanLetter Wi = new ('ᅱ');
+    public static readonly KoreanLetter Yu = new ('ᅲ');
+    public static readonly KoreanLetter Eu = new ('ᅳ');
+    public static readonly KoreanLetter Ui = new ('ᅴ');
+    public static readonly KoreanLetter I = new ('ᅵ');
 
-    public static readonly KoreanLetter A = new KoreanLetter('ᅡ');
-    public static readonly KoreanLetter Ae = new KoreanLetter('ᅢ');
-    public static readonly KoreanLetter Ya = new KoreanLetter('ᅣ');
-    public static readonly KoreanLetter Yae = new KoreanLetter('ᅤ');
-    public static readonly KoreanLetter Eo = new KoreanLetter('ᅥ');
-    public static readonly KoreanLetter E = new KoreanLetter('ᅦ');
-    public static readonly KoreanLetter Yeo = new KoreanLetter('ᅧ');
-    public static readonly KoreanLetter Ye = new KoreanLetter('ᅨ');
-    public static readonly KoreanLetter O = new KoreanLetter('ᅩ');
-    public static readonly KoreanLetter Wa = new KoreanLetter('ᅪ');
-    public static readonly KoreanLetter Wae = new KoreanLetter('ᅫ');
-    public static readonly KoreanLetter Oe = new KoreanLetter('ᅬ');
-    public static readonly KoreanLetter Yo = new KoreanLetter('ᅭ');
-    public static readonly KoreanLetter U = new KoreanLetter('ᅮ');
-    public static readonly KoreanLetter Wo = new KoreanLetter('ᅯ');
-    public static readonly KoreanLetter We = new KoreanLetter('ᅰ');
-    public static readonly KoreanLetter Wi = new KoreanLetter('ᅱ');
-    public static readonly KoreanLetter Yu = new KoreanLetter('ᅲ');
-    public static readonly KoreanLetter Eu = new KoreanLetter('ᅳ');
-    public static readonly KoreanLetter Ui = new KoreanLetter('ᅴ');
-    public static readonly KoreanLetter I = new KoreanLetter('ᅵ');
-
-    public static readonly KoreanLetter GiyeokBatchim = new KoreanLetter('ᆨ');
-    public static readonly KoreanLetter SsangGiyeokBatchim = new KoreanLetter('ᆩ');
-    public static readonly KoreanLetter GiyeokShiotBatchim = new KoreanLetter('ᆪ');
-    public static readonly KoreanLetter NieunBatchim = new KoreanLetter('ᆫ');
-    public static readonly KoreanLetter NieunJieutBatchim = new KoreanLetter('ᆬ');
-    public static readonly KoreanLetter NieunHieutBatchim = new KoreanLetter('ᆭ');
-    public static readonly KoreanLetter DigeutBatchim = new KoreanLetter('ᆮ');
-    public static readonly KoreanLetter RieulBatchim = new KoreanLetter('ᆯ');
-    public static readonly KoreanLetter RieulGiyeokBatchim = new KoreanLetter('ᆰ');
-    public static readonly KoreanLetter RieulMieumBatchim = new KoreanLetter('ᆱ');
-    public static readonly KoreanLetter RieulBieupBatchim = new KoreanLetter('ᆲ');
-    public static readonly KoreanLetter RieulShiotBatchim = new KoreanLetter('ᆳ');
-    public static readonly KoreanLetter RieulTieutBatchim = new KoreanLetter('ᆴ');
-    public static readonly KoreanLetter RieulPieupBatchim = new KoreanLetter('ᆵ');
-    public static readonly KoreanLetter RieulHieutBatchim = new KoreanLetter('ᆶ');
-    public static readonly KoreanLetter MieumBatchim = new KoreanLetter('ᆷ');
-    public static readonly KoreanLetter BieupBatchim = new KoreanLetter('ᆸ');
-    public static readonly KoreanLetter BieupShiotBatchim = new KoreanLetter('ᆹ');
-    public static readonly KoreanLetter ShiotBatchim = new KoreanLetter('ᆺ');
-    public static readonly KoreanLetter SsangShiotBatchim = new KoreanLetter('ᆻ');
-    public static readonly KoreanLetter IeungBatchim = new KoreanLetter('ᆼ');
-    public static readonly KoreanLetter JieutBatchim = new KoreanLetter('ᆽ');
-    public static readonly KoreanLetter ChieutBatchim = new KoreanLetter('ᆾ');
-    public static readonly KoreanLetter KieukBatchim = new KoreanLetter('ᆿ');
-    public static readonly KoreanLetter TieutBatchim = new KoreanLetter('ᇀ');
-    public static readonly KoreanLetter PieupBatchim = new KoreanLetter('ᇁ');
-    public static readonly KoreanLetter HieutBatchim = new KoreanLetter('ᇂ');
+    public static readonly KoreanLetter GiyeokBatchim = new ('ᆨ');
+    public static readonly KoreanLetter SsangGiyeokBatchim = new ('ᆩ');
+    public static readonly KoreanLetter GiyeokShiotBatchim = new ('ᆪ');
+    public static readonly KoreanLetter NieunBatchim = new ('ᆫ');
+    public static readonly KoreanLetter NieunJieutBatchim = new ('ᆬ');
+    public static readonly KoreanLetter NieunHieutBatchim = new ('ᆭ');
+    public static readonly KoreanLetter DigeutBatchim = new ('ᆮ');
+    public static readonly KoreanLetter RieulBatchim = new ('ᆯ');
+    public static readonly KoreanLetter RieulGiyeokBatchim = new ('ᆰ');
+    public static readonly KoreanLetter RieulMieumBatchim = new ('ᆱ');
+    public static readonly KoreanLetter RieulBieupBatchim = new ('ᆲ');
+    public static readonly KoreanLetter RieulShiotBatchim = new ('ᆳ');
+    public static readonly KoreanLetter RieulTieutBatchim = new ('ᆴ');
+    public static readonly KoreanLetter RieulPieupBatchim = new ('ᆵ');
+    public static readonly KoreanLetter RieulHieutBatchim = new ('ᆶ');
+    public static readonly KoreanLetter MieumBatchim = new ('ᆷ');
+    public static readonly KoreanLetter BieupBatchim = new ('ᆸ');
+    public static readonly KoreanLetter BieupShiotBatchim = new ('ᆹ');
+    public static readonly KoreanLetter ShiotBatchim = new ('ᆺ');
+    public static readonly KoreanLetter SsangShiotBatchim = new ('ᆻ');
+    public static readonly KoreanLetter IeungBatchim = new ('ᆼ');
+    public static readonly KoreanLetter JieutBatchim = new ('ᆽ');
+    public static readonly KoreanLetter ChieutBatchim = new ('ᆾ');
+    public static readonly KoreanLetter KieukBatchim = new ('ᆿ');
+    public static readonly KoreanLetter TieutBatchim = new ('ᇀ');
+    public static readonly KoreanLetter PieupBatchim = new ('ᇁ');
+    public static readonly KoreanLetter HieutBatchim = new ('ᇂ');
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
     #endregion
 
@@ -130,8 +131,20 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
 
     #region Operator Overloads
 
+    /// <summary>
+    /// Indicates whether the two specified <see cref="KoreanLetter" /> objects are equal.
+    /// </summary>
+    /// <param name="left">The first object to compare.</param>
+    /// <param name="right">The seocond object to compare.</param>
+    /// <returns><c>true</c> if the two <see cref="KoreanLetter" /> objects are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(KoreanLetter left, KoreanLetter right) => Equals(left, right);
 
+    /// <summary>
+    /// Indicates whether the two specified <see cref="KoreanLetter" /> objects are unequal.
+    /// </summary>
+    /// <param name="left">The first object to compare.</param>
+    /// <param name="right">The seocond object to compare.</param>
+    /// <returns><c>true</c> if the two <see cref="KoreanLetter" /> objects are unequal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(KoreanLetter left, KoreanLetter right) => !Equals(left, right);
 
     #endregion
@@ -238,36 +251,42 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
 
     #region Comparisons
 
+    /// <inheritdoc/>
     public bool Equals(KoreanLetter other) => CharacterCode == other.CharacterCode;
 
+    /// <inheritdoc/>
     public bool Equals(char c) => CharacterCode == c;
 
+    /// <inheritdoc/>
     public bool Equals(int i) => CharacterCode == i;
 
+    /// <inheritdoc/>
     public override bool Equals(object obj) => obj is KoreanLetter koreanLetter && Equals(koreanLetter);
 
+    /// <inheritdoc/>
     public override int GetHashCode() => CharacterCode.GetHashCode();
 
+    /// <inheritdoc/>
     public int CompareTo(KoreanLetter other) => CharacterCode.CompareTo(other.CharacterCode);
 
+    /// <inheritdoc/>
     public int CompareTo(char c) => CharacterCode.CompareTo(c);
 
+    /// <inheritdoc/>
     public int CompareTo(int i) => CharacterCode.CompareTo(i);
 
     #endregion
 
     #region String Formatting
 
+    /// <inheritdoc/>
     public override string ToString()
     {
-        return ToString("H");
+        // TODO: Document what H means.
+        return ToString("H", CultureInfo.CurrentCulture);
     }
 
-    public string ToString(string format)
-    {
-        return ToString(format, CultureInfo.CurrentCulture);
-    }
-
+    /// <inheritdoc/>
     public string ToString(string format, IFormatProvider formatProvider)
     {
         format = format.Replace("H", ((char)CharacterCode).ToString());

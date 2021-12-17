@@ -5,7 +5,18 @@
 /// </summary>
 public enum WordClass
 {
+    /// <summary>
+    /// Verb.
+    /// </summary>
     Verb,
+
+    /// <summary>
+    /// Adjective.
+    /// </summary>
     Adjective,
+
+    /// <summary>
+    /// Noun.
+    /// </summary>
     Noun,
 }

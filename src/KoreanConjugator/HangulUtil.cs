@@ -49,73 +49,63 @@ public static class HangulUtil
 
     private static readonly char[] Irregulars = { 'ᆺ', 'ᆮ', 'ᆸ', 'ᅳ', '르', 'ᆯ', 'ᇂ' };
 
-    private static HashSet<string> IrregularExceptions;
+    private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new ()
+    {
+        { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
+        { Tuple.Create('ᅥ', 'ᅥ'), 'ᅥ' },
+        { Tuple.Create('ᅢ', 'ᅥ'), 'ᅢ' },
+        { Tuple.Create('ᅢ', 'ᅡ'), 'ᅢ' },
+        { Tuple.Create('ᅡ', 'ᅵ'), 'ᅢ' },
+        { Tuple.Create('ᅥ', 'ᅵ'), 'ᅢ' },
+        { Tuple.Create('ᅣ', 'ᅵ'), 'ᅤ' },
+        { Tuple.Create('ᅤ', 'ᅥ'), 'ᅤ' },
+        { Tuple.Create('ᅤ', 'ᅡ'), 'ᅤ' },
+        { Tuple.Create('ᅦ', 'ᅥ'), 'ᅦ' },
+        { Tuple.Create('ᅩ', 'ᅡ'), 'ᅪ' },
+        { Tuple.Create('ᅮ', 'ᅥ'), 'ᅯ' },
+        { Tuple.Create('ᅮ', 'ᅳ'), 'ᅮ' },
+        { Tuple.Create('ᅬ', 'ᅥ'), 'ᅫ' },
+        { Tuple.Create('ᅳ', 'ᅡ'), 'ᅡ' },
+        { Tuple.Create('ᅳ', 'ᅥ'), 'ᅥ' },
+        { Tuple.Create('ᅡ', 'ᅳ'), 'ᅡ' },
+        { Tuple.Create('ᅥ', 'ᅳ'), 'ᅥ' },
+        { Tuple.Create('ᅣ', 'ᅳ'), 'ᅣ' },
+        { Tuple.Create('ᅵ', 'ᅥ'), 'ᅧ' },
+        { Tuple.Create('ᅡ', 'ᅧ'), 'ᅢ' },
+    };
 
-    public static HashSet<string> RegularIdaVerbs;
-
-    private static HashSet<string> BothRegularAndIrregular;
-
-    private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new Dictionary<Tuple<char, char>, char>
-        {
-            { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
-            { Tuple.Create('ᅥ', 'ᅥ'), 'ᅥ' },
-            { Tuple.Create('ᅢ', 'ᅥ'), 'ᅢ' },
-            { Tuple.Create('ᅢ', 'ᅡ'), 'ᅢ' },
-            { Tuple.Create('ᅡ', 'ᅵ'), 'ᅢ' },
-            { Tuple.Create('ᅥ', 'ᅵ'), 'ᅢ' },
-            { Tuple.Create('ᅣ', 'ᅵ'), 'ᅤ' },
-            { Tuple.Create('ᅤ', 'ᅥ'), 'ᅤ' },
-            { Tuple.Create('ᅤ', 'ᅡ'), 'ᅤ' },
-            { Tuple.Create('ᅦ', 'ᅥ'), 'ᅦ' },
-            { Tuple.Create('ᅩ', 'ᅡ'), 'ᅪ' },
-            { Tuple.Create('ᅮ', 'ᅥ'), 'ᅯ' },
-            { Tuple.Create('ᅮ', 'ᅳ'), 'ᅮ' },
-            { Tuple.Create('ᅬ', 'ᅥ'), 'ᅫ' },
-            { Tuple.Create('ᅳ', 'ᅡ'), 'ᅡ' },
-            { Tuple.Create('ᅳ', 'ᅥ'), 'ᅥ' },
-            { Tuple.Create('ᅡ', 'ᅳ'), 'ᅡ' },
-            { Tuple.Create('ᅥ', 'ᅳ'), 'ᅥ' },
-            { Tuple.Create('ᅣ', 'ᅳ'), 'ᅣ' },
-            { Tuple.Create('ᅵ', 'ᅥ'), 'ᅧ' },
-            { Tuple.Create('ᅡ', 'ᅧ'), 'ᅢ' },
-        };
-
-    public static readonly Dictionary<string, string> SpecialHonorificMap = new Dictionary<string, string>
-        {
-            { "먹", "들" },        // 잡수시다; 드시다
-            { "있", "계" },        // 계시다
-            { "자", "주무" },      // 주무시다
-            { "말하", "말씀하" },  // 말씀하시다
-            { "주", "드리" },      // Not 드리시다; when the receiver deserves hight respect
-
-            { "에게", "께" },
-            { "한테", "께" },
-            { "말", "말씀" },
-            { "보", "뵈" },       // or slightly even more formal 뵙.
-        };
+    private static readonly Dictionary<string, string> SpecialHonorificMap = new ()
+    {
+        { "먹", "들" },        // 잡수시다; 드시다
+        { "있", "계" },        // 계시다
+        { "자", "주무" },      // 주무시다
+        { "말하", "말씀하" },  // 말씀하시다
+        { "주", "드리" },      // Not 드리시다; when the receiver deserves hight respect
+        { "에게", "께" },
+        { "한테", "께" },
+        { "말", "말씀" },
+        { "보", "뵈" },       // or slightly even more formal 뵙.
+    };
 
     static HangulUtil()
     {
         LoadData();
     }
 
-    public static void LoadData()
-    {
-        var path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularsThatLookIrregular.txt");
-        string text = File.ReadAllText(path);
-        string[] words = text.Split(',');
-        IrregularExceptions = new HashSet<string>(words);
+    /// <summary>
+    /// Gets the regular 이다 verbs.
+    /// </summary>
+    public static HashSet<string> RegularIdaVerbs { get; private set; }
 
-        path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\BothRegularAndIrregular.txt");
-        text = File.ReadAllText(path);
-        words = text.Split(',');
-        BothRegularAndIrregular = new HashSet<string>(words);
+    /// <summary>
+    /// Gets words that look irregular but actually aren't.
+    /// </summary>
+    public static HashSet<string> IrregularExceptions { get; private set; }
 
-        path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularIdaVerbs.txt");
-        text = File.ReadAllText(path);
-        words = text.Split(',');
-        RegularIdaVerbs = new HashSet<string>(words);
-    }
+    /// <summary>
+    /// Gets words that are both regular and irregular.
+    /// </summary>
+    public static HashSet<string> BothRegularAndIrregular { get; private set; }
 
     /// <summary>
     /// Gets the index of the Korean letter in the "Initial" position.
@@ -290,6 +280,13 @@ public static class HangulUtil
         return (char)characterCode;
     }
 
+    /// <summary>
+    /// Constructs a syllable from individual letters.
+    /// </summary>
+    /// <param name="initial">The initial.</param>
+    /// <param name="medial">The medial.</param>
+    /// <param name="final">The final.</param>
+    /// <returns>A constructed syllable.</returns>
     public static char Construct(char initial, char medial, char final)
     {
         int indexOfFinal = final.Equals('\0') ? 0 : final - FirstModernFinalCharacterCode + 1;
@@ -300,6 +297,12 @@ public static class HangulUtil
             indexOfFinal);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the two characters can be contracted into a single character.
+    /// </summary>
+    /// <param name="character1">Character 1.</param>
+    /// <param name="character2">Character 2.</param>
+    /// <returns><c>true</c> if the characters can be contracted; otherwise, <c>false</c>.</returns>
     public static bool CanContract(char character1, char character2)
     {
         var medial1 = Medial(character1);
@@ -340,7 +343,7 @@ public static class HangulUtil
     {
         if (string.IsNullOrEmpty(verbStem))
         {
-            throw new ArgumentException(nameof(verbStem));
+            throw new ArgumentException("null or empty", nameof(verbStem));
         }
 
         bool hasIrregularForm =
@@ -407,5 +410,34 @@ public static class HangulUtil
     public static int FinalToIndex(char final)
     {
         return (final + 1) - FirstModernFinalCharacterCode;
+    }
+
+    /// <summary>
+    /// Gets the honorific form of the verb stem, if one exists.
+    /// </summary>
+    /// <param name="verbStem">The verb stem.</param>
+    /// <returns>The honorific form of he verb stem, if one exists; otherwise, <c>null</c>.</returns>
+    public static string GetSpecialHonorificForm(string verbStem)
+    {
+        SpecialHonorificMap.TryGetValue(verbStem, out var honorificStem);
+        return honorificStem;
+    }
+
+    private static void LoadData()
+    {
+        var path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularsThatLookIrregular.txt");
+        string text = File.ReadAllText(path);
+        string[] words = text.Split(',');
+        IrregularExceptions = new HashSet<string>(words);
+
+        path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\BothRegularAndIrregular.txt");
+        text = File.ReadAllText(path);
+        words = text.Split(',');
+        BothRegularAndIrregular = new HashSet<string>(words);
+
+        path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularIdaVerbs.txt");
+        text = File.ReadAllText(path);
+        words = text.Split(',');
+        RegularIdaVerbs = new HashSet<string>(words);
     }
 }

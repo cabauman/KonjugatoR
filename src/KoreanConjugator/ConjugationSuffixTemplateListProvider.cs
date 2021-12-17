@@ -5,65 +5,71 @@
 /// </summary>
 public class ConjugationSuffixTemplateListProvider
 {
-    private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map =
-        new Dictionary<Tuple<Tense, Formality, ClauseType>, string>
+    private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map = new ()
     {
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
-            { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Propositive),      "," },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Declarative),      ",다" },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Interrogative),    ",냐?" },
-            { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Propositive),      "," },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Declarative),      "어,요" },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Interrogative),    "어,요?" },
-            { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Propositive),      "," },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Declarative),      "어," },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Interrogative),    "어,?" },
-            { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Propositive),      "," },
-
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Imperative),       "(ㅂ/습),시오" },
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
-            { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Propositive),      "(ㅂ/읍),시다" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Declarative),      "(ㄴ/는),다" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Imperative),       "(아/어),라" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Interrogative),    ",나?" },
-            { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Propositive),      ",자" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Declarative),      "(아/어),요" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Imperative),       "(아/어),요" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Interrogative),    "(아/어),요?" },
-            { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Propositive),      "(아/어),요" },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Declarative),      "(아/어)," },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Imperative),       "(아/어)," },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Interrogative),    "(아/어),?" },
-            { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Propositive),      "(아/어)," },
-
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
-            { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Propositive),      "," },
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Declarative),      ",다" },
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Interrogative),    ",냐?" }, // TODO
-            { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Propositive),      "," },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Declarative),      "예,요" },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Interrogative),    "예,요?" },
-            { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Propositive),      "," },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Declarative),      "야," },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Imperative),       "," },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Interrogative),    "야,?" },
-            { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
+        { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
+        { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Declarative),      ",다" },
+        { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Interrogative),    ",냐?" },
+        { Tuple.Create(Tense.Past,      Formality.FormalLow,        ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Declarative),      "어,요" },
+        { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Interrogative),    "어,요?" },
+        { Tuple.Create(Tense.Past,      Formality.InformalHigh,     ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Declarative),      "어," },
+        { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Interrogative),    "어,?" },
+        { Tuple.Create(Tense.Past,      Formality.InformalLow,      ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
+        { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Imperative),       "(ㅂ/습),시오" },
+        { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
+        { Tuple.Create(Tense.Present,   Formality.FormalHigh,       ClauseType.Propositive),      "(ㅂ/읍),시다" },
+        { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Declarative),      "(ㄴ/는),다" },
+        { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Imperative),       "(아/어),라" },
+        { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Interrogative),    ",나?" },
+        { Tuple.Create(Tense.Present,   Formality.FormalLow,        ClauseType.Propositive),      ",자" },
+        { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Declarative),      "(아/어),요" },
+        { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Imperative),       "(아/어),요" },
+        { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Interrogative),    "(아/어),요?" },
+        { Tuple.Create(Tense.Present,   Formality.InformalHigh,     ClauseType.Propositive),      "(아/어),요" },
+        { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Declarative),      "(아/어)," },
+        { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Imperative),       "(아/어)," },
+        { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Interrogative),    "(아/어),?" },
+        { Tuple.Create(Tense.Present,   Formality.InformalLow,      ClauseType.Propositive),      "(아/어)," },
+        { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
+        { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습),니까?" },
+        { Tuple.Create(Tense.Future,    Formality.FormalHigh,       ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Declarative),      ",다" },
+        { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Interrogative),    ",냐?" },
+        { Tuple.Create(Tense.Future,    Formality.FormalLow,        ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Declarative),      "예,요" },
+        { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Interrogative),    "예,요?" },
+        { Tuple.Create(Tense.Future,    Formality.InformalHigh,     ClauseType.Propositive),      "," },
+        { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Declarative),      "야," },
+        { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Imperative),       "," },
+        { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Interrogative),    "야,?" },
+        { Tuple.Create(Tense.Future,    Formality.InformalLow,      ClauseType.Propositive),      "," },
     };
 
-    public string[] Get(string verbStem, ConjugationParams conjugationParams)
+    /// <summary>
+    /// Returns a list of suffix template strings.
+    /// </summary>
+    /// <param name="verbStem">The verb stem.</param>
+    /// <param name="conjugationParams">The conjugation parameters.</param>
+    /// <returns>A list of suffix template strings.</returns>
+    /// <exception cref="ArgumentException"><paramref name="verbStem"/> is null.</exception>
+    public string[] GetSuffixTemplateStrings(string verbStem, ConjugationParams conjugationParams)
     {
-        if (string.IsNullOrEmpty(nameof(verbStem)))
-            throw new ArgumentException(verbStem);
+        if (string.IsNullOrEmpty(verbStem))
+        {
+            throw new ArgumentException("null or empty", nameof(verbStem));
+        }
 
         var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
         ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings);

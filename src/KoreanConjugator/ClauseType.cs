@@ -5,8 +5,23 @@
 /// </summary>
 public enum ClauseType
 {
-    Declarative,    // Statement
-    Interrogative,  // Question
-    Imperative,     // Command
-    Propositive,    // Suggestion
+    /// <summary>
+    /// Statement.
+    /// </summary>
+    Declarative,
+
+    /// <summary>
+    /// Question.
+    /// </summary>
+    Interrogative,
+
+    /// <summary>
+    /// Command.
+    /// </summary>
+    Imperative,
+
+    /// <summary>
+    /// Suggestion.
+    /// </summary>
+    Propositive,
 }

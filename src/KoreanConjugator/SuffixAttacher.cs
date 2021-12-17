@@ -23,17 +23,20 @@ public abstract class SuffixAttacher
     public ConjugationResult AttachSuffixToVerb(string verbStem, string suffixTemplateString)
     {
         if (string.IsNullOrEmpty(verbStem))
-            throw new ArgumentException(nameof(verbStem));
+        {
+            throw new ArgumentException("null or empty", nameof(verbStem));
+        }
+
         if (string.IsNullOrEmpty(suffixTemplateString))
-            throw new ArgumentException(nameof(suffixTemplateString));
+        {
+            throw new ArgumentException("null or empty", nameof(suffixTemplateString));
+        }
 
-        //verbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateString);
-        //var suffixString = GetSuffix(verbStem, suffixTemplateString);
-        //var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
-        //var conjugatedForm = Attach(mutableVerbStem, suffixString);
-
-        //return new ConjugationResult(conjugatedForm, null);
-
+        // verbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateString);
+        // var suffixString = GetSuffix(verbStem, suffixTemplateString);
+        // var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
+        // var conjugatedForm = Attach(mutableVerbStem, suffixString);
+        // return new ConjugationResult(conjugatedForm, null);
         throw new NotImplementedException();
     }
 
@@ -46,15 +49,18 @@ public abstract class SuffixAttacher
     public ConjugationResult AttachSuffixToNoun(string noun, string suffixTemplateString)
     {
         if (string.IsNullOrEmpty(noun))
-            throw new ArgumentException(nameof(noun));
+        {
+            throw new ArgumentException("null or empty", nameof(noun));
+        }
+
         if (string.IsNullOrEmpty(suffixTemplateString))
-            throw new ArgumentException(nameof(suffixTemplateString));
+        {
+            throw new ArgumentException("null or empty", nameof(suffixTemplateString));
+        }
 
-        //string suffixString = GetSuffix(noun, suffixTemplateString);
-        //var result = AttachToNoun(noun, suffixString);
-
-        //return new ConjugationResult(result, null);
-
+        // string suffixString = GetSuffix(noun, suffixTemplateString);
+        // var result = AttachToNoun(noun, suffixString);
+        // return new ConjugationResult(result, null);
         throw new NotImplementedException();
     }
 
@@ -74,7 +80,7 @@ public abstract class SuffixAttacher
             {
                 // Apply vowel contraction.
                 char result = HangulUtil.Contract(text.Last(), suffix.First());
-                sb[sb.Length - 1] = result;
+                sb[^1] = result;
                 if (suffix.Length > 1)
                 {
                     sb.Append(suffix.Substring(1));
@@ -91,19 +97,16 @@ public abstract class SuffixAttacher
 
     private string Attach(MutableVerbStem verbStem, string suffix)
     {
-        //var sb = new StringBuilder(verbStem.Value);
-
-        //if (verbStem.HasHiddenBadchim)
-        //{
-        //    sb.Append(suffix);
-        //}
-        //else
-        //{
-        //    Attach(sb, suffix);
-        //}
-
-        //return sb.ToString();
-
+        // var sb = new StringBuilder(verbStem.Value);
+        // if (verbStem.HasHiddenBadchim)
+        // {
+        //     sb.Append(suffix);
+        // }
+        // else
+        // {
+        //     Attach(sb, suffix);
+        // }
+        // return sb.ToString();
         throw new NotImplementedException();
     }
 }

@@ -22,16 +22,19 @@ public class Conjugator : IConjugator
     public ConjugationResult Conjugate(string verbStem, ConjugationParams conjugationParams)
     {
         if (string.IsNullOrEmpty(nameof(verbStem)))
+        {
             throw new ArgumentException(verbStem);
+        }
 
         var templateListProvider = new ConjugationSuffixTemplateListProvider();
 
-        if (conjugationParams.Honorific && HangulUtil.SpecialHonorificMap.TryGetValue(verbStem, out var honorificStem))
+        if (conjugationParams.Honorific)
         {
-            verbStem = honorificStem;
+            var honorificStem = HangulUtil.GetSpecialHonorificForm(verbStem);
+            verbStem = honorificStem ?? verbStem;
         }
 
-        var suffixTemplateStrings = templateListProvider.Get(verbStem, conjugationParams);
+        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams);
         var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings.First());
         var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
         var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes.First().First());
@@ -204,7 +207,7 @@ public class Conjugator : IConjugator
 
     private void Attach(StringBuilder sb, string suffix)
     {
-        var lastSyllableOfSb = sb[sb.Length - 1];
+        var lastSyllableOfSb = sb[^1];
 
         if (HangulUtil.HasFinal(lastSyllableOfSb))
         {
@@ -219,7 +222,7 @@ public class Conjugator : IConjugator
                 int initial = HangulUtil.IndexOfInitial(lastSyllableOfSb);
                 int medial = HangulUtil.IndexOfMedial(lastSyllableOfSb);
                 char result = HangulUtil.Construct(initial, medial, final);
-                sb[sb.Length - 1] = result;
+                sb[^1] = result;
                 if (suffix.Length > 1)
                 {
                     sb.Append(suffix.Substring(1));
@@ -231,7 +234,7 @@ public class Conjugator : IConjugator
                 {
                     // Apply vowel contraction.
                     char result = HangulUtil.Contract(lastSyllableOfSb, suffix.First());
-                    sb[sb.Length - 1] = result;
+                    sb[^1] = result;
                     if (suffix.Length > 1)
                     {
                         sb.Append(suffix.Substring(1));

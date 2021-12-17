@@ -12,6 +12,7 @@ public class AEuSuffixTemplate : SuffixTemplate
     /// </summary>
     /// <param name="text">The template text.</param>
     /// <param name="staticText">The portion of the template text that doesn't change.</param>
+    /// <param name="pastTense">A value indicating whether the suffix should be past tense.</param>
     public AEuSuffixTemplate(string text, string staticText, bool pastTense)
         : base(text, staticText)
     {

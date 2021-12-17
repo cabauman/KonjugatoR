@@ -10,27 +10,27 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
     #region Character Code Constants
 
     /// <summary>
-    /// 가
+    /// 가.
     /// </summary>
     private const int FirstKoreanSyllableCharacterCode = 44032;
 
     /// <summary>
-    /// 힣
+    /// 힣.
     /// </summary>
     private const int LastKoreanSyllableCharacterCode = 55203;
 
     /// <summary>
-    /// ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ
+    /// ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ.
     /// </summary>
     private const int NumberOfInitials = 19;
 
     /// <summary>
-    /// ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ
+    /// ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ.
     /// </summary>
     private const int NumberOfMedials = 21;
 
     /// <summary>
-    /// \0ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ
+    /// \0ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ.
     /// </summary>
     private const int NumberOfFinals = 28;
 
@@ -158,8 +158,20 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
 
     #region Operator Overloads
 
+    /// <summary>
+    /// Indicates whether the two specified <see cref="KoreanSyllable" /> objects are equal.
+    /// </summary>
+    /// <param name="left">The first object to compare.</param>
+    /// <param name="right">The seocond object to compare.</param>
+    /// <returns><c>true</c> if the two <see cref="KoreanSyllable" /> objects are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(KoreanSyllable left, KoreanSyllable right) => Equals(left, right);
 
+    /// <summary>
+    /// Indicates whether the two specified <see cref="KoreanSyllable" /> objects are unequal.
+    /// </summary>
+    /// <param name="left">The first object to compare.</param>
+    /// <param name="right">The seocond object to compare.</param>
+    /// <returns><c>true</c> if the two <see cref="KoreanSyllable" /> objects are unequal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(KoreanSyllable left, KoreanSyllable right) => !Equals(left, right);
 
     #endregion
@@ -176,36 +188,42 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
 
     #region Comparisons
 
+    /// <inheritdoc/>
     public bool Equals(KoreanSyllable other) => CharacterCode == other.CharacterCode;
 
+    /// <inheritdoc/>
     public bool Equals(char c) => CharacterCode == c;
 
+    /// <inheritdoc/>
     public bool Equals(int i) => CharacterCode == i;
 
+    /// <inheritdoc/>
     public override bool Equals(object obj) => obj is KoreanSyllable koreanSyllable && Equals(koreanSyllable);
 
+    /// <inheritdoc/>
     public override int GetHashCode() => CharacterCode.GetHashCode();
 
+    /// <inheritdoc/>
     public int CompareTo(KoreanSyllable other) => CharacterCode.CompareTo(other.CharacterCode);
 
+    /// <inheritdoc/>
     public int CompareTo(char c) => CharacterCode.CompareTo(c);
 
+    /// <inheritdoc/>
     public int CompareTo(int i) => CharacterCode.CompareTo(i);
 
     #endregion
 
     #region String Formatting
 
+    /// <inheritdoc/>
     public override string ToString()
     {
-        return ToString("S");
+        // TODO: Document what S means.
+        return ToString("S", CultureInfo.CurrentCulture);
     }
 
-    public string ToString(string format)
-    {
-        return ToString(format, CultureInfo.CurrentCulture);
-    }
-
+    /// <inheritdoc/>
     public string ToString(string format, IFormatProvider formatProvider)
     {
         format = format.Replace("S", ((char)CharacterCode).ToString());
