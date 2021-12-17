@@ -225,7 +225,7 @@ public class Conjugator : IConjugator
                 sb[^1] = result;
                 if (suffix.Length > 1)
                 {
-                    sb.Append(suffix.Substring(1));
+                    sb.Append(suffix.AsSpan(1));
                 }
             }
             else
@@ -237,7 +237,7 @@ public class Conjugator : IConjugator
                     sb[^1] = result;
                     if (suffix.Length > 1)
                     {
-                        sb.Append(suffix.Substring(1));
+                        sb.Append(suffix.AsSpan(1));
                     }
                 }
                 else
