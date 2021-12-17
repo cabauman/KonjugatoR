@@ -1,3 +1,27 @@
 [*.cs]
+indent_size = 4
 csharp_style_namespace_declarations=file_scoped:warning
 csharp_prefer_braces=true:warning
+
+[*]
+indent_style = space
+
+# Xml project files
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,nativeproj,locproj}]
+indent_size = 2
+
+# Xml build files
+[*.builds]
+indent_size = 2
+
+# Xml files
+[*.{xml,stylecop,resx,ruleset}]
+indent_size = 2
+
+# Xml config files
+[*.{props,targets,config,nuspec}]
+indent_size = 2
+
+# YAML config files
+[*.{yml,yaml}]
+indent_size = 2
