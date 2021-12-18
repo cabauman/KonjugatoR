@@ -426,17 +426,17 @@ public static class HangulUtil
 
     private static void LoadData()
     {
-        var path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularsThatLookIrregular.txt");
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "Data/RegularsThatLookIrregular.txt");
         string text = File.ReadAllText(path);
         string[] words = text.Split(',');
         IrregularExceptions = new HashSet<string>(words);
 
-        path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\BothRegularAndIrregular.txt");
+        path = Path.Combine(Directory.GetCurrentDirectory(), "Data/BothRegularAndIrregular.txt");
         text = File.ReadAllText(path);
         words = text.Split(',');
         BothRegularAndIrregular = new HashSet<string>(words);
 
-        path = Path.Combine(Directory.GetCurrentDirectory(), @"Data\RegularIdaVerbs.txt");
+        path = Path.Combine(Directory.GetCurrentDirectory(), "Data/RegularIdaVerbs.txt");
         text = File.ReadAllText(path);
         words = text.Split(',');
         RegularIdaVerbs = new HashSet<string>(words);

@@ -39,16 +39,6 @@ public class SuffixTemplateParser : ISuffixTemplateParser
         var badchimConnector = match.Groups["Badchim"].Value;
         var staticText = match.Groups["StaticText"].Value;
 
-        GroupCollection collection = match.Groups;
-
-        // Note that group 0 is always the whole match
-        for (int i = 1; i < collection.Count; i++)
-        {
-            Group group = collection[i];
-            string name = regex.GroupNameFromNumber(i);
-            Console.WriteLine("{0}: {1} {2}", name, group.Success, group.Value);
-        }
-
         var template = new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector, staticText);
 
         return template;

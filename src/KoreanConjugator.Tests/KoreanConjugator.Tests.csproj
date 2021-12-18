@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CoverageResults\**" />
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="CoverageResults\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="CoverageResults\**" />
+    <None Remove="TestResults\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,9 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\KoreanConjugator\Data\BothRegularAndIrregular.txt" Link="Data\BothRegularAndIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\KoreanConjugator\Data\RegularsThatLookIrregular.txt" Link="Data\RegularsThatLookIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\KoreanConjugator\Data\RegularIdaVerbs.txt" Link="Data\RegularIdaVerbs.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../KoreanConjugator/Data/BothRegularAndIrregular.txt" Link="Data/BothRegularAndIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../KoreanConjugator/Data/RegularsThatLookIrregular.txt" Link="Data/RegularsThatLookIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../KoreanConjugator/Data/RegularIdaVerbs.txt" Link="Data/RegularIdaVerbs.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
