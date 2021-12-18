@@ -8,14 +8,32 @@
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <Copyright>Copyright © ([System.DateTime]::Now.Year) Colt Alan Bauman</Copyright>
+    <RepositoryUrl>https://github.com/cabauman/KoreanConjugator</RepositoryUrl>
+    <Authors>Colt Alan Bauman</Authors>
+    <PackageTags>korean;conjugator</PackageTags>
+    <Description>This package provides the ability to conjugate Koean verbs, adjectives, and nouns.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/cabauman/KoreanConjugator</PackageProjectUrl>
+  </PropertyGroup>
+
   <ItemGroup>
-    <None Update="Data\BothRegularAndIrregular.txt">
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Data/BothRegularAndIrregular.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\RegularIdaVerbs.txt">
+    <None Update="Data/RegularIdaVerbs.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Data\RegularsThatLookIrregular.txt">
+    <None Update="Data/RegularsThatLookIrregular.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.x
+          source-url: https://nuget.pkg.github.com/cabauman/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Build
+        run: dotnet build --configuration Release KoreanConjugator
+      - name: Create package
+        run: dotnet pack --configuration Release KoreanConjugator
+      - name: Publish package to GPR
+        run: dotnet nuget push KoreanConjugator/bin/Release/*.nupkg
