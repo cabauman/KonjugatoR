@@ -1,5 +1,8 @@
 # KoreanConjugator
 
+[![codecov](https://codecov.io/gh/cabauman/KoreanConjugator/branch/master/graph/badge.svg?token=5ZG48AUZID)](https://codecov.io/gh/cabauman/KoreanConjugator)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+
 ## Flow
 1. Line up components.
 2. Choose between options based on vowel and badchim of preceding syllable.
