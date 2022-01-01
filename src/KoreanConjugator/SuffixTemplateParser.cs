@@ -7,6 +7,9 @@ namespace KoreanConjugator;
 /// </summary>
 public class SuffixTemplateParser : ISuffixTemplateParser
 {
+    private static readonly Regex aEuaRegex = CreateAEuRegex();
+    private static readonly Regex badchimDependentRegex = CreateBadchimDependentRegex();
+
     /// <inheritdoc/>
     public SuffixTemplate Parse(string templateText)
     {
@@ -16,19 +19,7 @@ public class SuffixTemplateParser : ISuffixTemplateParser
             return ParseAEuTemplate(templateText);
         }
 
-        string wordClass = "(?<WordClass>A/V|A|V)";
-        string optionalWordClass = $"(?:{wordClass} \\+ )?";
-        string noBadchim = "(?<NoBadchim>[ㅂ|ㄹ|ㄴ|ㅁ|가-힣])";
-        string badchim = "(?<Badchim>[가-힣])";
-        string optionalNoBadchim = $"(?:{noBadchim}/)?";
-        string badchimNoBadchim = $"\\({optionalNoBadchim}{badchim}\\)";
-        string optionalBadchimNoBadchim = $"(?:{badchimNoBadchim})?";
-        string staticTextGroup = "(?<StaticText>.*)";
-        string pattern = $"{optionalWordClass}{optionalBadchimNoBadchim}{staticTextGroup}";
-
-        var regex = new Regex(pattern);
-        var match = regex.Match(templateText);
-
+        var match = badchimDependentRegex.Match(templateText);
         if (!match.Success)
         {
             throw new ArgumentException("Suffix doesn't match the template format.");
@@ -44,19 +35,9 @@ public class SuffixTemplateParser : ISuffixTemplateParser
         return template;
     }
 
-    private SuffixTemplate ParseAEuTemplate(string templateText)
+    private static SuffixTemplate ParseAEuTemplate(string templateText)
     {
-        string wordClassGroup = "(?<WordClass>A/V|A|V)";
-        string optionalWordClassGroup = $"(?:{wordClassGroup} \\+ )?";
-        string aGroup = "(?<AGroup>[아|았])";
-        string euGroup = "(?<EuGroup>[어|었])";
-        string aEuGroup = $"\\({aGroup}/{euGroup}\\)";
-        string staticTextGroup = "(?<StaticText>.*)";
-        string pattern = $"{optionalWordClassGroup}{aEuGroup}{staticTextGroup}";
-
-        var regex = new Regex(pattern);
-        var match = regex.Match(templateText);
-
+        var match = aEuaRegex.Match(templateText);
         if (!match.Success)
         {
             throw new ArgumentException("Suffix doesn't match the template format.");
@@ -70,5 +51,33 @@ public class SuffixTemplateParser : ISuffixTemplateParser
 
         var pastTense = aResult.Equals("았");
         return new AEuSuffixTemplate(templateText, staticTextResult, pastTense);
+    }
+
+    private static Regex CreateAEuRegex()
+    {
+        string wordClassGroup = "(?<WordClass>A/V|A|V)";
+        string optionalWordClassGroup = $"(?:{wordClassGroup} \\+ )?";
+        string staticTextGroup = "(?<StaticText>.*)";
+        string aGroup = "(?<AGroup>[아|았])";
+        string euGroup = "(?<EuGroup>[어|었])";
+        string aEuGroup = $"\\({aGroup}/{euGroup}\\)";
+        string pattern = $"{optionalWordClassGroup}{aEuGroup}{staticTextGroup}";
+
+        return new(pattern, RegexOptions.Compiled);
+    }
+
+    private static Regex CreateBadchimDependentRegex()
+    {
+        string wordClassGroup = "(?<WordClass>A/V|A|V)";
+        string optionalWordClassGroup = $"(?:{wordClassGroup} \\+ )?";
+        string staticTextGroup = "(?<StaticText>.*)";
+        string noBadchim = "(?<NoBadchim>[ㅂ|ㄹ|ㄴ|ㅁ|가-힣])";
+        string badchim = "(?<Badchim>[가-힣])";
+        string optionalNoBadchim = $"(?:{noBadchim}/)?";
+        string badchimNoBadchim = $"\\({optionalNoBadchim}{badchim}\\)";
+        string optionalBadchimNoBadchim = $"(?:{badchimNoBadchim})?";
+        string pattern = $"{optionalWordClassGroup}{optionalBadchimNoBadchim}{staticTextGroup}";
+
+        return new(pattern, RegexOptions.Compiled);
     }
 }
