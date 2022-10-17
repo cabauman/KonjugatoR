@@ -10,7 +10,7 @@
 4. Merge syllables from left to right.
 
 *Example: 듣다*
-1. Line up components (stem + honorific marker + tense  + fomality + clause type).
+1. Line up components (stem + honorific marker + tense  + formality + clause type).
 > 듣    + (으)시            + ㄹ/을 거 + ㅂ/습     + 니다
 
 2. Choose between options based on vowel and badchim of preceding syllable.

@@ -162,7 +162,7 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
     /// Indicates whether the two specified <see cref="KoreanSyllable" /> objects are equal.
     /// </summary>
     /// <param name="left">The first object to compare.</param>
-    /// <param name="right">The seocond object to compare.</param>
+    /// <param name="right">The second object to compare.</param>
     /// <returns><c>true</c> if the two <see cref="KoreanSyllable" /> objects are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(KoreanSyllable left, KoreanSyllable right) => Equals(left, right);
 
@@ -170,7 +170,7 @@ public readonly struct KoreanSyllable : IEquatable<KoreanSyllable>, IEquatable<c
     /// Indicates whether the two specified <see cref="KoreanSyllable" /> objects are unequal.
     /// </summary>
     /// <param name="left">The first object to compare.</param>
-    /// <param name="right">The seocond object to compare.</param>
+    /// <param name="right">The second object to compare.</param>
     /// <returns><c>true</c> if the two <see cref="KoreanSyllable" /> objects are unequal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(KoreanSyllable left, KoreanSyllable right) => !Equals(left, right);
 

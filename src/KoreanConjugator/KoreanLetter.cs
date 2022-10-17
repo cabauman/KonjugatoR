@@ -135,7 +135,7 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
     /// Indicates whether the two specified <see cref="KoreanLetter" /> objects are equal.
     /// </summary>
     /// <param name="left">The first object to compare.</param>
-    /// <param name="right">The seocond object to compare.</param>
+    /// <param name="right">The second object to compare.</param>
     /// <returns><c>true</c> if the two <see cref="KoreanLetter" /> objects are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(KoreanLetter left, KoreanLetter right) => Equals(left, right);
 
@@ -143,7 +143,7 @@ public readonly struct KoreanLetter : IEquatable<KoreanLetter>, IEquatable<char>
     /// Indicates whether the two specified <see cref="KoreanLetter" /> objects are unequal.
     /// </summary>
     /// <param name="left">The first object to compare.</param>
-    /// <param name="right">The seocond object to compare.</param>
+    /// <param name="right">The second object to compare.</param>
     /// <returns><c>true</c> if the two <see cref="KoreanLetter" /> objects are unequal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(KoreanLetter left, KoreanLetter right) => !Equals(left, right);
 

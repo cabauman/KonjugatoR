@@ -6,7 +6,7 @@
 public interface IConjugator
 {
     /// <summary>
-    /// Transforms the given verb stem into a specific grammatical form specified by the parms.
+    /// Transforms the given verb stem into a specific grammatical form specified by the params.
     /// </summary>
     /// <param name="verbStem">The portion of the verb without the '다' syllable at the end.</param>
     /// <param name="conjugationParams">The params used to specify the conjugated form.</param>

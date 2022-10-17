@@ -43,7 +43,7 @@ public class SuffixTemplateParser : ISuffixTemplateParser
             throw new ArgumentException("Suffix doesn't match the template format.");
         }
 
-        // TODO: Either use or get rid of these assinments.
+        // TODO: Either use or get rid of these assignments.
         var wordClassResult = match.Groups["WordClass"].Value;
         var aResult = match.Groups["AGroup"].Value;
         var euResult = match.Groups["EuGroup"].Value;

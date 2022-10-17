@@ -209,7 +209,7 @@ public static class HangulUtil
     /// Sets the Korean letter in the "Final" position of the syllable.
     /// </summary>
     /// <param name="syllable">A Korean syllable.</param>
-    /// <param name="final">The Korean letter to place in the "Final" postion.</param>
+    /// <param name="final">The Korean letter to place in the "Final" position.</param>
     /// <returns>The resulting Korean syllable.</returns>
     public static char SetFinal(char syllable, char final)
     {
@@ -406,7 +406,7 @@ public static class HangulUtil
     /// <summary>
     /// Gets the index of the "Final".
     /// </summary>
-    /// <param name="final">A Korean letter that belongs in the "Final" posoiton of a syllable.</param>
+    /// <param name="final">A Korean letter that belongs in the "Final" position of a syllable.</param>
     /// <returns>The index of the "Final".</returns>
     public static int FinalToIndex(char final)
     {
