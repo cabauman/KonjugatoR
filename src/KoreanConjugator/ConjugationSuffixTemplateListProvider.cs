@@ -5,7 +5,7 @@
 /// </summary>
 public class ConjugationSuffixTemplateListProvider
 {
-    private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map = new ()
+    private static readonly Dictionary<Tuple<Tense, Formality, ClauseType>, string> Map = new()
     {
         { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습),니다" },
         { Tuple.Create(Tense.Past,      Formality.FormalHigh,       ClauseType.Imperative),       "," },

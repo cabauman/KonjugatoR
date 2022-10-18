@@ -9,7 +9,7 @@ public class ConjugatorBenchmarks
     private static readonly int Iterations = 100;
     private readonly Conjugator _conjugator = new (new SuffixTemplateParser());
     private readonly string _stem = "기다리";
-    private ConjugationParams _conjugationParams = new ()
+    private ConjugationParams _conjugationParams = new()
     {
         ClauseType = ClauseType.Declarative,
         Formality = Formality.InformalLow,

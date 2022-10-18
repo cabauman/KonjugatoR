@@ -49,7 +49,7 @@ public static class HangulUtil
 
     private static readonly char[] Irregulars = { 'ᆺ', 'ᆮ', 'ᆸ', 'ᅳ', '르', 'ᆯ', 'ᇂ' };
 
-    private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new ()
+    private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new()
     {
         { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
         { Tuple.Create('ᅥ', 'ᅥ'), 'ᅥ' },
@@ -74,7 +74,7 @@ public static class HangulUtil
         { Tuple.Create('ᅡ', 'ᅧ'), 'ᅢ' },
     };
 
-    private static readonly Dictionary<string, string> SpecialHonorificMap = new ()
+    private static readonly Dictionary<string, string> SpecialHonorificMap = new()
     {
         { "먹", "들" },        // 잡수시다; 드시다
         { "있", "계" },        // 계시다
