@@ -122,11 +122,8 @@ public class Conjugator : IConjugator
                 switch (HangulUtil.Final(lastSyllableOfVerbStem))
                 {
                     case 'ᆯ':
-                        // drop ㄹ.
-                        lastSyllableOfVerbStem = HangulUtil.DropFinal(lastSyllableOfVerbStem);
-                        break;
                     case 'ᇂ':
-                        // drop ㅎ.
+                        // drop ᆯ/ᇂ
                         lastSyllableOfVerbStem = HangulUtil.DropFinal(lastSyllableOfVerbStem);
                         break;
                     default:
