@@ -58,7 +58,7 @@ public class Conjugator : IConjugator
         return suffixes;
     }
 
-    private MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
+    private static MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
     {
         bool hasHiddenBadchim = false;
         var sb = new StringBuilder(verbStem);
@@ -192,7 +192,7 @@ public class Conjugator : IConjugator
         return verbStem;
     }
 
-    private string ApplyConjugatedFormEdgeCaseLogic(string conjugatedForm, bool isHonorific)
+    private static string ApplyConjugatedFormEdgeCaseLogic(string conjugatedForm, bool isHonorific)
     {
         if (isHonorific && conjugatedForm.Contains("셔요"))
         {
@@ -202,7 +202,7 @@ public class Conjugator : IConjugator
         return conjugatedForm;
     }
 
-    private void Attach(StringBuilder sb, string suffix)
+    private static void Attach(StringBuilder sb, string suffix)
     {
         var lastSyllableOfSb = sb[^1];
 
@@ -245,7 +245,7 @@ public class Conjugator : IConjugator
         }
     }
 
-    private string MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
+    private static string MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
     {
         var sb = new StringBuilder(verbStem.Value);
 

@@ -77,7 +77,7 @@ public class ConjugationSuffixTemplateListProvider
         return suffixTemplateStrings;
     }
 
-    private string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
+    private static string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
     {
         var suffixes = new List<string>();
 
@@ -104,7 +104,7 @@ public class ConjugationSuffixTemplateListProvider
         return suffixes.ToArray();
     }
 
-    private void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixTemplateStrings)
+    private static void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixTemplateStrings)
     {
         if (conjugationParams.Tense == Tense.Present &&
             !conjugationParams.Honorific &&
