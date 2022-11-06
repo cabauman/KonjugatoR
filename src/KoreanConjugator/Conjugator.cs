@@ -15,7 +15,8 @@ public class Conjugator : IConjugator
     /// <param name="suffixTemplateParser">The implementation to use for parsing suffix templates.</param>
     public Conjugator(ISuffixTemplateParser suffixTemplateParser)
     {
-        this.suffixTemplateParser = suffixTemplateParser ?? throw new ArgumentNullException(nameof(suffixTemplateParser));
+        ArgumentNullException.ThrowIfNull(suffixTemplateParser);
+        this.suffixTemplateParser = suffixTemplateParser;
     }
 
     /// <inheritdoc/>
