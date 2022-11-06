@@ -8,6 +8,7 @@ namespace KoreanConjugator;
 public class Conjugator : IConjugator
 {
     private readonly ISuffixTemplateParser suffixTemplateParser;
+    private readonly ConjugationSuffixTemplateListProvider templateListProvider = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Conjugator"/> class.
@@ -26,8 +27,6 @@ public class Conjugator : IConjugator
         {
             throw new ArgumentException(verbStem);
         }
-
-        var templateListProvider = new ConjugationSuffixTemplateListProvider();
 
         if (conjugationParams.Honorific)
         {
