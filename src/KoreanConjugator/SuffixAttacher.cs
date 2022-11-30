@@ -22,15 +22,8 @@ public abstract class SuffixAttacher
     /// <returns>A conjugation result.</returns>
     public ConjugationResult AttachSuffixToVerb(string verbStem, string suffixTemplateString)
     {
-        if (string.IsNullOrEmpty(verbStem))
-        {
-            throw new ArgumentException("null or empty", nameof(verbStem));
-        }
-
-        if (string.IsNullOrEmpty(suffixTemplateString))
-        {
-            throw new ArgumentException("null or empty", nameof(suffixTemplateString));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(verbStem);
+        ArgumentException.ThrowIfNullOrEmpty(suffixTemplateString);
 
         // verbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateString);
         // var suffixString = GetSuffix(verbStem, suffixTemplateString);
@@ -48,15 +41,8 @@ public abstract class SuffixAttacher
     /// <returns>A conjugation result.</returns>
     public ConjugationResult AttachSuffixToNoun(string noun, string suffixTemplateString)
     {
-        if (string.IsNullOrEmpty(noun))
-        {
-            throw new ArgumentException("null or empty", nameof(noun));
-        }
-
-        if (string.IsNullOrEmpty(suffixTemplateString))
-        {
-            throw new ArgumentException("null or empty", nameof(suffixTemplateString));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(noun);
+        ArgumentException.ThrowIfNullOrEmpty(suffixTemplateString);
 
         // string suffixString = GetSuffix(noun, suffixTemplateString);
         // var result = AttachToNoun(noun, suffixString);

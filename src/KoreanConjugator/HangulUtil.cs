@@ -341,10 +341,7 @@ public static class HangulUtil
     /// <returns><c>true</c> if the verb stem is irregular; otherwise, <c>false</c>.</returns>
     public static bool IsIrregular(string verbStem)
     {
-        if (string.IsNullOrEmpty(verbStem))
-        {
-            throw new ArgumentException("null or empty", nameof(verbStem));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
         bool hasIrregularForm =
             Irregulars.Contains(Final(verbStem.Last())) ||

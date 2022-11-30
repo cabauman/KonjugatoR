@@ -23,10 +23,7 @@ public class Conjugator : IConjugator
     /// <inheritdoc/>
     public ConjugationResult Conjugate(string verbStem, ConjugationParams conjugationParams)
     {
-        if (string.IsNullOrEmpty(nameof(verbStem)))
-        {
-            throw new ArgumentException(verbStem);
-        }
+        ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
         if (conjugationParams.Honorific)
         {

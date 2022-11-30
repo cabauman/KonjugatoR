@@ -66,10 +66,7 @@ public class ConjugationSuffixTemplateListProvider
     /// <exception cref="ArgumentException"><paramref name="verbStem"/> is null.</exception>
     public string[] GetSuffixTemplateStrings(string verbStem, ConjugationParams conjugationParams)
     {
-        if (string.IsNullOrEmpty(verbStem))
-        {
-            throw new ArgumentException("null or empty", nameof(verbStem));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
         var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
         ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings);
