@@ -32,9 +32,9 @@ public class Conjugator : IConjugator
         }
 
         var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams);
-        var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings.First());
+        var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings[0]);
         var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
-        var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes.First().First());
+        var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes[0][0]);
         var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
         var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
 
@@ -59,14 +59,14 @@ public class Conjugator : IConjugator
     {
         bool hasHiddenBadchim = false;
         var sb = new StringBuilder(verbStem);
-        char lastSyllableOfVerbStem = verbStem.Last();
+        char lastSyllableOfVerbStem = verbStem[^1];
         string valueToAppend = string.Empty;
 
         if (HangulUtil.IsIrregular(verbStem))
         {
             if ('르'.Equals(lastSyllableOfVerbStem))
             {
-                if ("아어았었".Any(value => value == firstSyllableOfFirstSuffix))
+                if ("아어았었".Contains(firstSyllableOfFirstSuffix))
                 {
                     // add ㄹ to syllable preceding 르.
                     int indexOfCharToReplace = verbStem.Length - 2;
@@ -89,8 +89,8 @@ public class Conjugator : IConjugator
                         break;
                     case 'ᆸ':
                         // drop ㅂ, add 우/오.
-                        if ((verbStem.Equals("묻잡") || "돕곱".Any(x => x.Equals(lastSyllableOfVerbStem))) &&
-                            "아어았었".Any(x => x.Equals(firstSyllableOfFirstSuffix)))
+                        if ((verbStem.Equals("묻잡") || "돕곱".Contains(lastSyllableOfVerbStem)) &&
+                            "아어았었".Contains(firstSyllableOfFirstSuffix))
                         {
                             valueToAppend = "오";
                         }
@@ -104,7 +104,7 @@ public class Conjugator : IConjugator
                     case 'ᇂ':
                         // drop ㅎ.
                         lastSyllableOfVerbStem = HangulUtil.DropFinal(lastSyllableOfVerbStem);
-                        if ("아어았었".Any(value => value == firstSyllableOfFirstSuffix))
+                        if ("아어았었".Contains(firstSyllableOfFirstSuffix))
                         {
                             lastSyllableOfVerbStem = HangulUtil.Contract(lastSyllableOfVerbStem, '이');
                         }
@@ -177,11 +177,11 @@ public class Conjugator : IConjugator
     private string ApplyVerbStemEdgeCaseLogic(string verbStem, string suffixTemplateString)
     {
         var suffix = GetSuffix(verbStem, suffixTemplateString);
-        if (verbStem.Equals("뵙") && HangulUtil.Initial(suffix.First()).Equals('ᄋ'))
+        if (verbStem.Equals("뵙") && HangulUtil.Initial(suffix[0]).Equals('ᄋ'))
         {
             verbStem = "뵈";
         }
-        else if (verbStem.Equals("푸") && HangulUtil.Initial(suffix.First()).Equals('ᄋ'))
+        else if (verbStem.Equals("푸") && HangulUtil.Initial(suffix[0]).Equals('ᄋ'))
         {
             verbStem = "퍼";
         }
@@ -209,9 +209,9 @@ public class Conjugator : IConjugator
         }
         else
         {
-            if (HangulUtil.IsModernCompatibilityLetter(suffix.First()))
+            if (HangulUtil.IsModernCompatibilityLetter(suffix[0]))
             {
-                var composableFinal = HangulUtil.ToComposableFinal(suffix.First());
+                var composableFinal = HangulUtil.ToComposableFinal(suffix[0]);
                 var final = HangulUtil.FinalToIndex(composableFinal);
                 int initial = HangulUtil.IndexOfInitial(lastSyllableOfSb);
                 int medial = HangulUtil.IndexOfMedial(lastSyllableOfSb);
@@ -224,10 +224,10 @@ public class Conjugator : IConjugator
             }
             else
             {
-                if (HangulUtil.CanContract(lastSyllableOfSb, suffix.First()))
+                if (HangulUtil.CanContract(lastSyllableOfSb, suffix[0]))
                 {
                     // Apply vowel contraction.
-                    char result = HangulUtil.Contract(lastSyllableOfSb, suffix.First());
+                    char result = HangulUtil.Contract(lastSyllableOfSb, suffix[0]);
                     sb[^1] = result;
                     if (suffix.Length > 1)
                     {

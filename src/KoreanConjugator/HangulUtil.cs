@@ -344,12 +344,12 @@ public static class HangulUtil
         ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
         bool hasIrregularForm =
-            Irregulars.Contains(Final(verbStem.Last())) ||
-            Irregulars.Contains(Medial(verbStem.Last())) ||
-            Irregulars.Contains(verbStem.Last());
+            Irregulars.Contains(Final(verbStem[^1])) ||
+            Irregulars.Contains(Medial(verbStem[^1])) ||
+            Irregulars.Contains(verbStem[^1]);
 
         return
-            IsSyllable(verbStem.Last()) &&
+            IsSyllable(verbStem[^1]) &&
             hasIrregularForm &&
             IrregularExceptions != null &&
             !IrregularExceptions.Contains(verbStem);
