@@ -1,16 +1,18 @@
-﻿namespace KoreanConjugator;
+﻿using System.Text;
+
+namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a mutable verb stem.
 /// </summary>
-public class MutableVerbStem
+public readonly struct MutableVerbStem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MutableVerbStem"/> class.
     /// </summary>
     /// <param name="value">The verb stem.</param>
     /// <param name="hasHiddenBadchim">A value indicating whether the verb stem has a hidden badchim.</param>
-    public MutableVerbStem(string value, bool hasHiddenBadchim)
+    public MutableVerbStem(StringBuilder value, bool hasHiddenBadchim)
     {
         Value = value;
         HasHiddenBadchim = hasHiddenBadchim;
@@ -19,7 +21,7 @@ public class MutableVerbStem
     /// <summary>
     /// Gets the verb stem.
     /// </summary>
-    public string Value { get; }
+    public StringBuilder Value { get; }
 
     /// <summary>
     /// Gets a value indicating whether the verb stem has a hidden badchim.

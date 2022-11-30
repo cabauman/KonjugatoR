@@ -11,5 +11,5 @@ public interface IConjugator
     /// <param name="verbStem">The portion of the verb without the '다' syllable at the end.</param>
     /// <param name="conjugationParams">The params used to specify the conjugated form.</param>
     /// <returns>A conjugation result.</returns>
-    ConjugationResult Conjugate(string verbStem, ConjugationParams conjugationParams);
+    ConjugationResult Conjugate(string verbStem, in ConjugationParams conjugationParams);
 }

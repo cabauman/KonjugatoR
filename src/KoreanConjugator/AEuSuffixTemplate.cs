@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a suffix template that starts with the 아/어 grammatical principal.
 /// </summary>
-public class AEuSuffixTemplate : SuffixTemplate
+public readonly ref struct AEuSuffixTemplate
 {
     private readonly bool pastTense;
 
@@ -13,14 +13,18 @@ public class AEuSuffixTemplate : SuffixTemplate
     /// <param name="text">The template text.</param>
     /// <param name="staticText">The portion of the template text that doesn't change.</param>
     /// <param name="pastTense">A value indicating whether the suffix should be past tense.</param>
-    public AEuSuffixTemplate(string text, string staticText, bool pastTense)
-        : base(text, staticText)
+    public AEuSuffixTemplate(ReadOnlySpan<char> staticText, bool pastTense)
     {
+        StaticText = staticText;
         this.pastTense = pastTense;
     }
 
-    /// <inheritdoc/>
-    public override string ChooseSuffixVariant(string precedingText)
+    /// <summary>
+    /// Gets the portion of the template text that doesn't change.
+    /// </summary>
+    public ReadOnlySpan<char> StaticText { get; }
+
+    public string ChooseSuffixVariant(string precedingText)
     {
         string connector;
         if (precedingText.Equals("하"))
@@ -51,4 +55,11 @@ public class AEuSuffixTemplate : SuffixTemplate
 
         return string.Concat(connector, StaticText);
     }
+}
+
+public readonly ref struct Hello
+{
+    public ReadOnlySpan<char> Abc { get; }
+    public string A { get; }
+    public object B { get; init; }
 }

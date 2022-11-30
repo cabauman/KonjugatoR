@@ -9,16 +9,50 @@ public class SuffixTemplateParser : ISuffixTemplateParser
 {
     private static readonly Regex aEuaRegex = CreateAEuRegex();
     private static readonly Regex badchimDependentRegex = CreateBadchimDependentRegex();
+    //private static readonly AEuSuffixTemplate temp = ParseAEuTemplate("(아/어)");
 
     /// <inheritdoc/>
-    public SuffixTemplate Parse(string templateText)
+    public string Parse(string templateText, string precedingText)
     {
         // V/A + [ㄹ/을] 거
         if (templateText.Contains("(아/어)") || templateText.Contains("(았/었)"))
         {
-            return ParseAEuTemplate(templateText);
+            var template = ParseAEuTemplate(templateText);
+            return template.ChooseSuffixVariant(precedingText);
+        }
+        else
+        {
+            var template = ParseBadchimDependentTemplate(templateText);
+            return template.ChooseSuffixVariant(precedingText);
+        }
+    }
+
+    public static AEuSuffixTemplate ParseAEuTemplate(string templateText)
+    {
+        //foreach (var m in aEuaRegex.EnumerateMatches(templateText))
+        //{
+        //    var s = templateText.AsSpan().Slice(m.Index, m.Length);
+        //    var s2 = s;
+        //}
+        var match = aEuaRegex.Match(templateText);
+        if (!match.Success)
+        {
+            throw new ArgumentException("Suffix doesn't match the template format.");
         }
 
+        // TODO: Either use or get rid of these assignments.
+        //var wordClassResult = match.Groups["WordClass"].Value;
+        var aResult = match.Groups["AGroup"].ValueSpan;
+        //var euResult = match.Groups["EuGroup"].Value;
+        var staticTextResult = match.Groups["StaticText"].ValueSpan;
+
+        var pastTense = aResult.SequenceEqual("았");
+        //return new AEuSuffixTemplate(templateText, staticTextResult, pastTense);
+        return default;
+    }
+
+    public static BadchimDependentSuffixTemplate ParseBadchimDependentTemplate(string templateText)
+    {
         var match = badchimDependentRegex.Match(templateText);
         if (!match.Success)
         {
@@ -30,27 +64,8 @@ public class SuffixTemplateParser : ISuffixTemplateParser
         var badchimConnector = match.Groups["Badchim"].Value;
         var staticText = match.Groups["StaticText"].Value;
 
-        var template = new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector, staticText);
-
-        return template;
-    }
-
-    private static SuffixTemplate ParseAEuTemplate(string templateText)
-    {
-        var match = aEuaRegex.Match(templateText);
-        if (!match.Success)
-        {
-            throw new ArgumentException("Suffix doesn't match the template format.");
-        }
-
-        // TODO: Either use or get rid of these assignments.
-        var wordClassResult = match.Groups["WordClass"].Value;
-        var aResult = match.Groups["AGroup"].Value;
-        var euResult = match.Groups["EuGroup"].Value;
-        var staticTextResult = match.Groups["StaticText"].Value;
-
-        var pastTense = aResult.Equals("았");
-        return new AEuSuffixTemplate(templateText, staticTextResult, pastTense);
+        //return new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector, staticText);
+        return default;
     }
 
     private static Regex CreateAEuRegex()

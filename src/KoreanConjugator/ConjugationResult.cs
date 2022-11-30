@@ -5,7 +5,7 @@
 /// </summary>
 public readonly struct ConjugationResult
 {
-    internal ConjugationResult(string value, IReadOnlyList<string> steps)
+    public ConjugationResult(string value, IReadOnlyList<string> steps)
     {
         Value = value;
         Steps = steps;

@@ -34,7 +34,7 @@ public abstract class SuffixAttacher
 
         // verbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateString);
         // var suffixString = GetSuffix(verbStem, suffixTemplateString);
-        // var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString.First());
+        // var mutableVerbStem = ApplyIrregularVerbRules(verbStem, suffixString[0]);
         // var conjugatedForm = Attach(mutableVerbStem, suffixString);
         // return new ConjugationResult(conjugatedForm, null);
         throw new NotImplementedException();
@@ -69,17 +69,17 @@ public abstract class SuffixAttacher
         var sb = new StringBuilder();
         sb.Append(text);
 
-        if (HangulUtil.HasFinal(text.Last()))
+        if (HangulUtil.HasFinal(text[^1]))
         {
             // Attach.
             sb.Append(suffix);
         }
         else
         {
-            if (HangulUtil.CanContract(text.Last(), suffix.First()))
+            if (HangulUtil.CanContract(text[^1], suffix[0]))
             {
                 // Apply vowel contraction.
-                char result = HangulUtil.Contract(text.Last(), suffix.First());
+                char result = HangulUtil.Contract(text[^1], suffix[0]);
                 sb[^1] = result;
                 if (suffix.Length > 1)
                 {
