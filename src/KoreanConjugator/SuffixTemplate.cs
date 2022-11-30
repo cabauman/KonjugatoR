@@ -1,24 +1,34 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a template where the resulting suffix depends on a grammatical principle and the preceding text.
 /// </summary>
-public readonly struct SuffixTemplate
+public readonly ref struct SuffixTemplate
 {
-    private readonly bool pastTense;
+    public readonly bool pastTense;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SuffixTemplate"/> class.
     /// </summary>
     /// <param name="text">The template text.</param>
     /// <param name="staticText">The portion of the template text that doesn't change.</param>
-    public SuffixTemplate(string text, ReadOnlySpan<char> staticText)
+    public SuffixTemplate(
+        string text,
+        ReadOnlySpan<char> wordClass,
+        ReadOnlySpan<char> firstSyllableOption1,
+        ReadOnlySpan<char> firstSyllableOption2,
+        ReadOnlySpan<char> staticText)
     {
         Text = text;
+        WordClass = wordClass;
+        FirstSyllableOption1 = firstSyllableOption1;
+        FirstSyllableOption2 = firstSyllableOption2;
         StaticText = staticText;
+        pastTense = firstSyllableOption1.SequenceEqual("았");
     }
 
     /// <summary>
@@ -45,22 +55,22 @@ public readonly struct SuffixTemplate
     /// <summary>
     /// Gets the portion of the template text that doesn't change.
     /// </summary>
-    public ReadOnlyMemory<char> StaticText { get; }
+    public ReadOnlySpan<char> StaticText { get; }
 
     /// <summary>
     /// Gets the suffix text based off of the template and preceding text.
     /// </summary>
     /// <param name="precedingText">The text that the suffix will be attached to.</param>
     /// <returns>The suffix text.</returns>
-    public char ChooseSuffixVariant(string precedingText)
+    public void ChooseSuffixVariant(string precedingText, Span<char> buffer)
     {
-        if (FirstSyllableOption1[0] is '아' or '았')
+        if (FirstSyllableOption1.Length == 1 && FirstSyllableOption1[0] is '아' or '았')
         {
-            return ChooseAEuSuffixVariant(precedingText);
+            ChooseAEuSuffixVariant(precedingText);
         }
         else
         {
-            return ChooseBadchimDependentSuffixVariant(precedingText);
+            ChooseBadchimDependentSuffixVariant(precedingText, buffer);
         }
     }
 
@@ -96,33 +106,43 @@ public readonly struct SuffixTemplate
         return connector;
     }
 
-    private char ChooseBadchimDependentSuffixVariant(string precedingText)
+    private void ChooseBadchimDependentSuffixVariant(string precedingText, Span<char> buffer)
     {
         var badchimlessConnector = FirstSyllableOption1;
         var badchimConnector = FirstSyllableOption2;
 
-        char connector = default;
-        if (badchimConnector == string.Empty)
+        if (badchimlessConnector.Length == 0 && badchimConnector.Length == 0)
         {
-            // Doesn't depend on a badchim
-            // No modifications
+            return StaticText;
+        }
+
+        char connector = default;
+        // TODO: See about reducing this to one statement.
+        if (HangulUtil.Final(precedingText[^1]) is not 'ᆯ' and not '\0')
+        {
+            // not == ㄹ
+            // Choose badchim connector
+            connector = badchimConnector[0];
         }
         else
         {
-            // TODO: See about reducing this to one statement.
-            if (HangulUtil.Final(precedingText[^1]) != 'ᆯ' && HangulUtil.HasFinal(precedingText[^1]))
-            {
-                // not == ㄹ
-                // Choose badchim connector
-                connector = badchimConnector[0];
-            }
-            else
+            if (badchimlessConnector.Length == 1)
             {
                 // Choose badchimless connector (it will be equal to string.Empty if none)
                 connector = badchimlessConnector[0];
             }
         }
 
-        return connector;
+        var sb = new StringBuilder();
+        //Span<char> x = stackalloc char[StaticText.Length + 1];
+        //x[0] = connector;
+        //StaticText.CopyTo(x[1..]);
+        //sb.Append(x);
+
+        //sb.Append(connector);
+        //sb.Append(StaticText);
+
+        buffer[0] = connector;
+        StaticText.CopyTo(buffer[1..]);
     }
 }

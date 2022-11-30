@@ -45,19 +45,9 @@ public class Conjugator : IConjugator
             verbStem = honorificStem ?? verbStem;
         }
 
-        //var arr = ArrayPool<string>.Shared.Rent(4);
-        // +32 = 32
         templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr);
-        var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, arr[0]);
-        // FIXED +32 = 64
-        var suffixes = GetSuffixes(sanitizedVerbStem, arr);
-        // FIXED +32 = 96
-        var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes[0][0]);
-        // FIXED +96 = 192
-        var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
-        // +32 = 224
+        var conjugatedForm = GetSuffixes(verbStem, arr);
         var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
-        //ArrayPool<string>.Shared.Return(arr);
 
         return new ConjugationResult(finalForm, Array.Empty<string>());
     }
@@ -88,22 +78,41 @@ public class Conjugator : IConjugator
         return sanitizedVerbStem;
     }
 
-    private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)
+    private StringBuilder GetSuffixes(string verbStem, string[] suffixTemplateStrings)
     {
-        //var suffixes = new string[suffixTemplateStrings.Length];
-        suffixTemplateStrings[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
+        var firstSuffix = SuffixTemplateParser2.Parse(suffixTemplateStrings[0], verbStem);
+        var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, arr[0]);
+        var firstSyllableOfFirstSuffix = firstSuffix.ChooseSuffixVariant(verbStem);
+        var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, firstSyllableOfFirstSuffix);
 
+        if (mutableVerbStem.HasHiddenBadchim)
+        {
+            sb.Append(firstSuffix.ChooseSuffixVariant(verbStem));
+            sb.Append(firstSuffix.StaticText);
+        }
+        else
+        {
+            Span<char> span = stackalloc char[firstSuffix.StaticText.Length + 1];
+            var suffix = firstSuffix.ChooseSuffixVariant(verbStem, span);
+            Attach(sb, suffix);
+        }
+
+        var preceding = firstSuffix;
         for (int i = 1; i < suffixTemplateStrings.Length; ++i)
         {
             if (suffixTemplateStrings[i] is null)
             {
                 break;
             }
-            var preceding = suffixTemplateStrings[i - 1];
-            suffixTemplateStrings[i] = GetSuffix(preceding, suffixTemplateStrings[i]);
+            //var preceding = suffixTemplateStrings[i - 1];
+            //var suffix = GetSuffix(preceding, suffixTemplateStrings[i]);
+            var suffixTemplate = SuffixTemplateParser2.Parse(suffixTemplateStrings[i], preceding);
+            var suffix = suffixTemplate.ChooseSuffixVariant(verbStem);
+            Attach(sb, suffix);
+            //previous =
         }
 
-        return suffixTemplateStrings;
+        return sb;
     }
 
     public static MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
@@ -305,77 +314,79 @@ public class Conjugator : IConjugator
         }
     }
 
-    private static void Attach(StringBuilder sb, SuffixTemplate suffix)
+    // TODO: Move to SuffixTemplate???
+    private static void Attach(StringBuilder sb, Span<char> suffix)
     {
         var lastSyllableOfSb = sb[^1];
 
         if (HangulUtil.HasFinal(lastSyllableOfSb))
         {
-            sb.Append(suffix.ChooseSuffixVariant(""));
-            sb.Append(suffix.StaticText);
+            sb.Append(suffix);
         }
         else
         {
-            if (HangulUtil.IsModernCompatibilityLetter(suffix.ChooseSuffixVariant("")))
+            if (HangulUtil.IsModernCompatibilityLetter(suffix[0]))
             {
-                var composableFinal = HangulUtil.ToComposableFinal(suffix.ChooseSuffixVariant(""));
+                var composableFinal = HangulUtil.ToComposableFinal(suffix[0]);
                 var final = HangulUtil.FinalToIndex(composableFinal);
                 int initial = HangulUtil.IndexOfInitial(lastSyllableOfSb);
                 int medial = HangulUtil.IndexOfMedial(lastSyllableOfSb);
                 char result = HangulUtil.Construct(initial, medial, final);
                 sb[^1] = result;
-                sb.Append(suffix.StaticText);
+                if (suffix.Length > 1)
+                {
+                    sb.Append(suffix[1..]);
+                }
             }
             else
             {
-                if (HangulUtil.CanContract(lastSyllableOfSb, suffix.ChooseSuffixVariant("")))
+                if (HangulUtil.CanContract(lastSyllableOfSb, suffix.ChooseSuffixVariant(preceding)))
                 {
                     // Apply vowel contraction.
-                    char result = HangulUtil.Contract(lastSyllableOfSb, suffix.ChooseSuffixVariant(""));
+                    char result = HangulUtil.Contract(lastSyllableOfSb, suffix.ChooseSuffixVariant(preceding));
                     sb[^1] = result;
-                    sb.Append(suffix.StaticText);
+                    sb.Append(suffix[1..]);
                 }
                 else
                 {
-                    sb.Append(suffix.ChooseSuffixVariant(""));
-                    sb.Append(suffix.StaticText);
+                    sb.Append(suffix);
                 }
             }
         }
     }
 
-    public static StringBuilder MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, SuffixTemplate[] suffixes)
-    {
-        //var sb = sbPool.Get();
-        var sb = verbStem.Value;
-        //var stem = verbStem.Value.ToString();
-        //sb.Clear();
-        //sb.Append(stem);
+    //public static StringBuilder MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, SuffixTemplate[] suffixes)
+    //{
+    //    //var sb = sbPool.Get();
+    //    var sb = verbStem.Value;
+    //    //var stem = verbStem.Value.ToString();
+    //    //sb.Clear();
+    //    //sb.Append(stem);
 
-        if (verbStem.HasHiddenBadchim)
-        {
-            sb.Append(suffixes[0].ChooseSuffixVariant(""));
-            sb.Append(suffixes[0].StaticText);
-        }
-        else
-        {
-            Attach(sb, suffixes[0]);
-        }
+    //    if (verbStem.HasHiddenBadchim)
+    //    {
+    //        sb.Append(suffixes[0].ChooseSuffixVariant(""));
+    //        sb.Append(suffixes[0].StaticText);
+    //    }
+    //    else
+    //    {
+    //        Attach(sb, suffixes[0]);
+    //    }
 
-        for (int i = 1; i < suffixes.Length; ++i)
-        {
-            if (suffixes[i] is null)
-            {
-                break;
-            }
-            var suffix = suffixes[i];
-            Attach(sb, suffix);
-        }
+    //    for (int i = 1; i < suffixes.Length; ++i)
+    //    {
+    //        //if (suffixes[i] is null)
+    //        //{
+    //        //    break;
+    //        //}
+    //        var suffix = suffixes[i];
+    //        Attach(sb, suffix);
+    //    }
 
-        //var result = sb.ToString();
-        //sbPool.Return(sb);
-        return sb;
-    }
+    //    //var result = sb.ToString();
+    //    //sbPool.Return(sb);
+    //    return sb;
+    //}
 
     public static StringBuilder MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
     {

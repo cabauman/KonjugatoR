@@ -8,21 +8,28 @@ namespace KoreanConjugator;
 /// </summary>
 public class SuffixTemplateParser2
 {
-    public static string Parse(string templateText, string precedingText)
+    public static SuffixTemplate Parse(string templateText)
     {
         if ((templateText.Contains("(아/어)") || templateText.Contains("(았/었)")))
         {
-            var template = ParseAEuTemplate(templateText);
-            return template.ChooseSuffixVariant(precedingText);
+            //var template = ParseAEuTemplate(templateText);
+            //return template.ChooseSuffixVariant(precedingText);
+            return ParseAEuTemplate(templateText);
         }
         else
         {
-            var template = ParseBadchimDependentTemplate(templateText);
-            return template.ChooseSuffixVariant(precedingText);
+            //var template = ParseBadchimDependentTemplate(templateText);
+            // template.ChooseSuffixVariant(precedingText);
+            return ParseAEuTemplate(templateText);
         }
     }
 
-    public static AEuSuffixTemplate ParseAEuTemplate(string templateText)
+    public static void Parse2(Span<char> span)
+    {
+
+    }
+
+    public static SuffixTemplate ParseAEuTemplate(string templateText)
     {
         var s = templateText.AsSpan();
         ReadOnlySpan<char> wordClass = default;
@@ -36,7 +43,10 @@ public class SuffixTemplateParser2
         }
         if (TryParseDynamicText(s, nextStartIndex, out var badchimlessConnectorIndex, out var badchimConnectorIndex, out nextStartIndex))
         {
-            badchimlessConnector = s.Slice(badchimlessConnectorIndex, 1);
+            if (badchimlessConnectorIndex > 0)
+            {
+                badchimlessConnector = s.Slice(badchimlessConnectorIndex, 1);
+            }
             badchimConnector = s.Slice(badchimConnectorIndex, 1);
         }
         if (nextStartIndex < s.Length)
@@ -45,18 +55,19 @@ public class SuffixTemplateParser2
             staticText = s[nextStartIndex..];
         }
 
-        return new AEuSuffixTemplate(staticText, badchimlessConnector[0] == '았');
+        //return new AEuSuffixTemplate(staticText, badchimlessConnector[0] == '았');
+        return new SuffixTemplate(templateText, wordClass, badchimlessConnector, badchimConnector, staticText);
     }
 
     private static bool TryParseWordClass(ReadOnlySpan<char> s, out int length, out int nextStartIndex)
     {
-        if (s[..6] == "A/V + ")
+        if (s.Length >= 6 && s[..6] == "A/V + ")
         {
             length = 3;
             nextStartIndex = 6;
             return true;
         }
-        if (s[..4] is "A + " or "V + ")
+        if (s.Length >= 4 && s[..4] is "A + " or "V + ")
         {
             length = 1;
             nextStartIndex = 4;
