@@ -49,29 +49,29 @@ public static class HangulUtil
 
     private static readonly char[] Irregulars = { 'ᆺ', 'ᆮ', 'ᆸ', 'ᅳ', '르', 'ᆯ', 'ᇂ' };
 
-    private static readonly Dictionary<Tuple<char, char>, char> VowelContractionMap = new()
+    private static readonly Dictionary<(char, char), char> VowelContractionMap = new()
     {
-        { Tuple.Create('ᅡ', 'ᅡ'), 'ᅡ' },
-        { Tuple.Create('ᅥ', 'ᅥ'), 'ᅥ' },
-        { Tuple.Create('ᅢ', 'ᅥ'), 'ᅢ' },
-        { Tuple.Create('ᅢ', 'ᅡ'), 'ᅢ' },
-        { Tuple.Create('ᅡ', 'ᅵ'), 'ᅢ' },
-        { Tuple.Create('ᅥ', 'ᅵ'), 'ᅢ' },
-        { Tuple.Create('ᅣ', 'ᅵ'), 'ᅤ' },
-        { Tuple.Create('ᅤ', 'ᅥ'), 'ᅤ' },
-        { Tuple.Create('ᅤ', 'ᅡ'), 'ᅤ' },
-        { Tuple.Create('ᅦ', 'ᅥ'), 'ᅦ' },
-        { Tuple.Create('ᅩ', 'ᅡ'), 'ᅪ' },
-        { Tuple.Create('ᅮ', 'ᅥ'), 'ᅯ' },
-        { Tuple.Create('ᅮ', 'ᅳ'), 'ᅮ' },
-        { Tuple.Create('ᅬ', 'ᅥ'), 'ᅫ' },
-        { Tuple.Create('ᅳ', 'ᅡ'), 'ᅡ' },
-        { Tuple.Create('ᅳ', 'ᅥ'), 'ᅥ' },
-        { Tuple.Create('ᅡ', 'ᅳ'), 'ᅡ' },
-        { Tuple.Create('ᅥ', 'ᅳ'), 'ᅥ' },
-        { Tuple.Create('ᅣ', 'ᅳ'), 'ᅣ' },
-        { Tuple.Create('ᅵ', 'ᅥ'), 'ᅧ' },
-        { Tuple.Create('ᅡ', 'ᅧ'), 'ᅢ' },
+        { ('ᅡ', 'ᅡ'), 'ᅡ' },
+        { ('ᅥ', 'ᅥ'), 'ᅥ' },
+        { ('ᅢ', 'ᅥ'), 'ᅢ' },
+        { ('ᅢ', 'ᅡ'), 'ᅢ' },
+        { ('ᅡ', 'ᅵ'), 'ᅢ' },
+        { ('ᅥ', 'ᅵ'), 'ᅢ' },
+        { ('ᅣ', 'ᅵ'), 'ᅤ' },
+        { ('ᅤ', 'ᅥ'), 'ᅤ' },
+        { ('ᅤ', 'ᅡ'), 'ᅤ' },
+        { ('ᅦ', 'ᅥ'), 'ᅦ' },
+        { ('ᅩ', 'ᅡ'), 'ᅪ' },
+        { ('ᅮ', 'ᅥ'), 'ᅯ' },
+        { ('ᅮ', 'ᅳ'), 'ᅮ' },
+        { ('ᅬ', 'ᅥ'), 'ᅫ' },
+        { ('ᅳ', 'ᅡ'), 'ᅡ' },
+        { ('ᅳ', 'ᅥ'), 'ᅥ' },
+        { ('ᅡ', 'ᅳ'), 'ᅡ' },
+        { ('ᅥ', 'ᅳ'), 'ᅥ' },
+        { ('ᅣ', 'ᅳ'), 'ᅣ' },
+        { ('ᅵ', 'ᅥ'), 'ᅧ' },
+        { ('ᅡ', 'ᅧ'), 'ᅢ' },
     };
 
     private static readonly Dictionary<string, string> SpecialHonorificMap = new()
@@ -307,8 +307,8 @@ public static class HangulUtil
     {
         var medial1 = Medial(character1);
         var medial2 = Medial(character2);
-        var key1 = Tuple.Create(medial1, medial2);
-        var key2 = Tuple.Create(character1, medial2);
+        var key1 = (medial1, medial2);
+        var key2 = (character1, medial2);
 
         return !IsModernCompatibilityLetter(character1) &&
             KoreanLetter.Ieung.Equals(Initial(character2)) &&
@@ -325,7 +325,7 @@ public static class HangulUtil
     {
         var medial1 = Medial(syllable1);
         var medial2 = Medial(syllable2);
-        if (!VowelContractionMap.TryGetValue(Tuple.Create(medial1, medial2), out char medial))
+        if (!VowelContractionMap.TryGetValue((medial1, medial2), out char medial))
         {
             throw new Exception($"Tried to contract {syllable1} and {syllable2} but" +
                 "couldn't find a valid contraction.");
