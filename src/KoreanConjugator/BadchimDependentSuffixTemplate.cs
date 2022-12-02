@@ -48,7 +48,7 @@ public class BadchimDependentSuffixTemplate : SuffixTemplate
         }
         else
         {
-            if (HangulUtil.Final(precedingText[^1]) != 'ᆯ' && HangulUtil.HasFinal(precedingText[^1]))
+            if (HangulUtil.Final(precedingText[^1]) is not 'ᆯ' and not '\0')
             {
                 // not == ㄹ
                 // Choose badchim connector

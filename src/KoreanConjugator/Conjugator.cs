@@ -141,7 +141,7 @@ public class Conjugator : IConjugator
             }
             else if (HangulUtil.IsModernCompatibilityLetter(firstSyllableOfFirstSuffix))
             {
-                if (firstSyllableOfFirstSuffix == 'ㄴ' || firstSyllableOfFirstSuffix == 'ㄹ' || firstSyllableOfFirstSuffix == 'ㅂ')
+                if (firstSyllableOfFirstSuffix is 'ㄴ' or 'ㄹ' or 'ㅂ')
                 {
                     switch (HangulUtil.Final(lastSyllableOfVerbStem))
                     {
