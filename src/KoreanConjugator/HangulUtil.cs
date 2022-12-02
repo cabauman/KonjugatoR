@@ -164,13 +164,17 @@ public static class HangulUtil
     /// <summary>
     /// Gets the Korean letter in the "Final" position.
     /// </summary>
+    /// <remarks>
+    /// Arithmetic implementation: (char)(FirstModernFinalCharacterCode + finalOffset - 1);
+    /// The arithmetic implementation isn't used here because of the '\0' special case.
+    /// </remarks>
     /// <param name="syllable">A Korean syllable.</param>
     /// <returns>The Korean letter in the "Final" position.</returns>
     public static char Final(char syllable)
     {
         var finalOffset = IndexOfFinal(syllable);
 
-        return (char)(FirstModernFinalCharacterCode + finalOffset - 1);
+        return Finals[finalOffset];
     }
 
     /// <summary>
