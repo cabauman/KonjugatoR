@@ -139,7 +139,7 @@ public class Conjugator : IConjugator
                         break;
                 }
             }
-            else if (HangulUtil.IsComposableLetter(firstSyllableOfFirstSuffix))
+            else if (HangulUtil.IsModernCompatibilityLetter(firstSyllableOfFirstSuffix))
             {
                 if (firstSyllableOfFirstSuffix == 'ㄴ' || firstSyllableOfFirstSuffix == 'ㄹ' || firstSyllableOfFirstSuffix == 'ㅂ')
                 {
@@ -153,7 +153,7 @@ public class Conjugator : IConjugator
                             break;
                     }
                 }
-                else if (firstSyllableOfFirstSuffix == 'ᄆ')
+                else if (firstSyllableOfFirstSuffix == 'ㅁ')
                 {
                     switch (HangulUtil.Final(lastSyllableOfVerbStem))
                     {
