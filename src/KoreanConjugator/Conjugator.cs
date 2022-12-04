@@ -176,6 +176,11 @@ public class Conjugator : IConjugator
 
     private string ApplyVerbStemEdgeCaseLogic(string verbStem, string suffixTemplateString)
     {
+        if (verbStem is not "뵙" and not "푸")
+        {
+            return verbStem;
+        }
+
         var suffix = GetSuffix(verbStem, suffixTemplateString);
         if (verbStem.Equals("뵙") && HangulUtil.Initial(suffix[0]).Equals('ᄋ'))
         {
