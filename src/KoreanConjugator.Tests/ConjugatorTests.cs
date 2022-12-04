@@ -433,7 +433,7 @@ public class ConjugatorTests
     [InlineData("가", false, "갈 거예요?")]
     [InlineData("읽", true, "읽으실 거예요?")]
     [InlineData("읽", false, "읽을 거예요?")]
-    [InlineData("살", true, "살 거예요?")]
+    [InlineData("살", true, "사실 거예요?")]
     [InlineData("살", false, "살 거예요?")]
     public void Should_ConjugateToFutureInformalHighInterrogative(string stem, bool honorific, string expected)
     {
