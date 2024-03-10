@@ -1,6 +1,6 @@
 # KoreanConjugator
 
-[![codecov](https://codecov.io/gh/cabauman/KoreanConjugator/branch/master/graph/badge.svg?token=5ZG48AUZID)](https://codecov.io/gh/cabauman/KoreanConjugator)
+[![codecov](https://codecov.io/github/cabauman/KonjugatoR/graph/badge.svg?token=5ZG48AUZID)](https://codecov.io/github/cabauman/KonjugatoR)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 ## Flow
