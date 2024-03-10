@@ -3,7 +3,7 @@
 namespace KoreanConjugator.Benchmarks;
 
 [MemoryDiagnoser]
-[SimpleJob(launchCount: 1, warmupCount: 1, targetCount: 100)]
+[SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 100)]
 public class ConjugatorBenchmarks
 {
     private static readonly int Iterations = 100;
