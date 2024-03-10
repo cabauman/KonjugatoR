@@ -23,6 +23,6 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --collect:"XPlat Code Coverage"
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
