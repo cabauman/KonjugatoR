@@ -7,6 +7,8 @@ namespace KoreanConjugator;
 /// </summary>
 public class Conjugator : IConjugator
 {
+    private static readonly StringBuilder sb = new(8);
+    private readonly string[] arr = new string[4];
     private readonly ISuffixTemplateParser suffixTemplateParser;
     private readonly ConjugationSuffixTemplateListProvider templateListProvider = new();
 
@@ -21,6 +23,45 @@ public class Conjugator : IConjugator
     }
 
     /// <inheritdoc/>
+    public string MemoryTest(string verbStem, ConjugationParams conjugationParams)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(verbStem);
+
+        if (conjugationParams.Honorific)
+        {
+            var honorificStem = HangulUtil.GetSpecialHonorificForm(verbStem);
+            verbStem = honorificStem ?? verbStem;
+        }
+
+        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr);
+        // 11.72 KB
+        // pass shared array into GetSuffixTemplateStrings: 0 KB
+        var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings[0]);
+        // 11.72 KB (+0 KB)
+        // pass shared array into GetSuffixTemplateStrings: 0 KB (+0 KB)
+        //long startMemory = GC.GetTotalMemory(false);
+        var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
+        // 92.19 (+80.47 KB)
+        // pass shared array into GetSuffixTemplateStrings: 82.81 KB (+82.81 KB)
+        // don't create new array in GetSuffixes: 77.34 KB (+77.34 KB)
+        //long endMemory = GC.GetTotalMemory(false);
+        //long allocatedMemory = endMemory - startMemory;
+        //Console.WriteLine($"Memory allocated within Conjugate method: {allocatedMemory} bytes");
+        //var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes[0][0]);
+        // 108.59 KB (+16.4 KB)
+        // shared StringBuilder: 98.44 KB (+6.25 KB)
+        // MutableVerbStem to struct and avoid sb.ToString too early: 92.19 KB (+0 KB)
+        //var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
+        // 121.88 KB (+13.29 KB)
+        // shared StringBuilder: 101.56 KB (+3.12 KB)
+        // MutableVerbStem to struct and avoid sb.ToString too early: 92.19 KB (+0 KB)
+        //var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
+        // MutableVerbStem to struct and avoid sb.ToString too early: 95.31 KB (+3.12 KB)
+
+        return "";
+    }
+
+    /// <inheritdoc/>
     public ConjugationResult Conjugate(string verbStem, ConjugationParams conjugationParams)
     {
         ArgumentException.ThrowIfNullOrEmpty(verbStem);
@@ -31,23 +72,27 @@ public class Conjugator : IConjugator
             verbStem = honorificStem ?? verbStem;
         }
 
-        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams);
+        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr);
         var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings[0]);
         var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
         var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes[0][0]);
         var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
-        var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
+        var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm.Value, conjugationParams.Honorific);
 
-        return new ConjugationResult(finalForm, Array.Empty<string>());
+        return new ConjugationResult(finalForm, []);
     }
 
     private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)
     {
-        var suffixes = new string[suffixTemplateStrings.Length];
+        var suffixes = suffixTemplateStrings;
         suffixes[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
 
         for (int i = 1; i < suffixTemplateStrings.Length; ++i)
         {
+            if (string.IsNullOrEmpty(suffixTemplateStrings[i]))
+            {
+                break;
+            }
             var preceding = suffixes[i - 1];
             suffixes[i] = GetSuffix(preceding, suffixTemplateStrings[i]);
         }
@@ -58,7 +103,9 @@ public class Conjugator : IConjugator
     private static MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
     {
         bool hasHiddenBadchim = false;
-        var sb = new StringBuilder(verbStem);
+        //var sb = new StringBuilder(verbStem);
+        sb.Clear();
+        sb.Append(verbStem);
         char lastSyllableOfVerbStem = verbStem[^1];
         string valueToAppend = string.Empty;
 
@@ -171,7 +218,7 @@ public class Conjugator : IConjugator
         sb[verbStem.Length - 1] = lastSyllableOfVerbStem;
         sb.Append(valueToAppend);
 
-        return new MutableVerbStem(sb.ToString(), hasHiddenBadchim);
+        return new MutableVerbStem(sb, hasHiddenBadchim);
     }
 
     private string ApplyVerbStemEdgeCaseLogic(string verbStem, string suffixTemplateString)
@@ -194,14 +241,15 @@ public class Conjugator : IConjugator
         return verbStem;
     }
 
-    private static string ApplyConjugatedFormEdgeCaseLogic(string conjugatedForm, bool isHonorific)
+    private static string ApplyConjugatedFormEdgeCaseLogic(StringBuilder conjugatedForm, bool isHonorific)
     {
-        if (isHonorific && conjugatedForm.Contains("셔요"))
+        if (isHonorific && conjugatedForm[^2] == '셔' && conjugatedForm[^1] == '요')
         {
-            conjugatedForm = conjugatedForm.Replace("셔요", "세요");
+            //conjugatedForm = conjugatedForm.Replace("셔요", "세요");
+            conjugatedForm[^2] = '세';
         }
 
-        return conjugatedForm;
+        return conjugatedForm.ToString();
     }
 
     private static void Attach(StringBuilder sb, string suffix)
@@ -247,26 +295,32 @@ public class Conjugator : IConjugator
         }
     }
 
-    private static string MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
+    private static MutableVerbStem MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
     {
-        var sb = new StringBuilder(verbStem.Value);
+        //var sb = new StringBuilder(verbStem.Value);
+        //sb.Clear();
+        //sb.Append(verbStem.Value);
 
         if (verbStem.HasHiddenBadchim)
         {
-            sb.Append(suffixes[0]);
+            verbStem.Value.Append(suffixes[0]);
         }
         else
         {
-            Attach(sb, suffixes[0]);
+            Attach(verbStem.Value, suffixes[0]);
         }
 
         for (int i = 1; i < suffixes.Length; ++i)
         {
             var suffix = suffixes[i];
-            Attach(sb, suffix);
+            if (string.IsNullOrEmpty(suffix))
+            {
+                break;
+            }
+            Attach(verbStem.Value, suffix);
         }
 
-        return sb.ToString();
+        return verbStem;
     }
 
     private string GetSuffix(string precedingText, string suffixTemplateString)

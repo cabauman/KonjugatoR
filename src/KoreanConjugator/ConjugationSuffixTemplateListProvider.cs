@@ -64,41 +64,44 @@ public class ConjugationSuffixTemplateListProvider
     /// <param name="conjugationParams">The conjugation parameters.</param>
     /// <returns>A list of suffix template strings.</returns>
     /// <exception cref="ArgumentException"><paramref name="verbStem"/> is null.</exception>
-    public string[] GetSuffixTemplateStrings(string verbStem, ConjugationParams conjugationParams)
+    public string[] GetSuffixTemplateStrings(string verbStem, ConjugationParams conjugationParams, string[] suffixes)
     {
         ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
-        var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams);
+        var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams, suffixes);
         ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings);
 
         return suffixTemplateStrings;
     }
 
-    private static string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams)
+    private static string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams, string[] suffixes)
     {
-        var suffixes = new List<string>();
-
+        int i = 0;
         if (conjugationParams.Honorific)
         {
-            suffixes.Add("(으)시");
+            suffixes[i++] = "(으)시";
         }
 
         switch (conjugationParams.Tense)
         {
             case Tense.Future:
-                suffixes.Add("(ㄹ/을) 거");
+                suffixes[i++] = "(ㄹ/을) 거";
                 break;
             case Tense.Past:
-                suffixes.Add("(았/었)");
+                suffixes[i++] = "(았/었)";
                 break;
             case Tense.Present:
                 break;
         }
 
         var key = (conjugationParams.Tense, conjugationParams.Formality, conjugationParams.ClauseType);
-        suffixes.Add(Map[key]);
+        var end = Map[key];
+        if (end.Length > 0)
+        {
+            suffixes[i] = end;
+        }
 
-        return suffixes.ToArray();
+        return suffixes;
     }
 
     private static void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixTemplateStrings)

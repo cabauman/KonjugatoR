@@ -35,7 +35,7 @@ public class SuffixTemplateParser : ISuffixTemplateParser
         return template;
     }
 
-    private static SuffixTemplate ParseAEuTemplate(string templateText)
+    private static AEuSuffixTemplate ParseAEuTemplate(string templateText)
     {
         var match = aEuaRegex.Match(templateText);
         if (!match.Success)

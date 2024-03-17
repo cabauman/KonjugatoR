@@ -3,12 +3,14 @@
 namespace KoreanConjugator.Benchmarks;
 
 [MemoryDiagnoser]
-[SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 100)]
+[SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 10)]
 public class ConjugatorBenchmarks
 {
     private static readonly int Iterations = 100;
-    private readonly Conjugator _conjugator = new (new SuffixTemplateParser());
+    private readonly Conjugator _conjugator = new(new SuffixTemplateParser());
     private readonly string _stem = "기다리";
+    private readonly ConjugationResult[] _results = new ConjugationResult[Iterations];
+    private readonly string[] _results2 = new string[Iterations];
     private ConjugationParams _conjugationParams = new()
     {
         ClauseType = ClauseType.Declarative,
@@ -18,14 +20,23 @@ public class ConjugatorBenchmarks
         WordClass = WordClass.Verb,
     };
 
-    [Benchmark]
+    //[Benchmark]
     public ConjugationResult[] Conjugate()
     {
-        var results = new ConjugationResult[Iterations];
         for (int i = 0; i < Iterations; i++)
         {
-            results[i] = _conjugator.Conjugate(_stem, _conjugationParams);
+            _results[i] = _conjugator.Conjugate(_stem, _conjugationParams);
         }
-        return results;
+        return _results;
+    }
+
+    [Benchmark]
+    public string[] MemoryTest()
+    {
+        for (int i = 0; i < Iterations; i++)
+        {
+            _results2[i] = _conjugator.MemoryTest(_stem, _conjugationParams);
+        }
+        return _results2;
     }
 }
