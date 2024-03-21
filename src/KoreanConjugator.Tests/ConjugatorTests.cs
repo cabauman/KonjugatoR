@@ -52,6 +52,10 @@ public class ConjugatorTests
     [InlineData("모이", false, "모여")]
     [InlineData("모이", true, "모이셔")]
     //[InlineData("모이", true, "모여요")]
+    [InlineData("예쁘", false, "예뻐")]
+    [InlineData("따르", false, "따라")]
+    [InlineData("치르", false, "치러")]
+    [InlineData("들르", false, "들러")]
     public void Should_ConjugateToPresentInformalLowDeclarative(string stem, bool honorific, string expected)
     {
         var sut = new Conjugator(new SuffixTemplateParser());

@@ -33,14 +33,14 @@ public class Conjugator : IConjugator
             verbStem = honorificStem ?? verbStem;
         }
 
-        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr);
+        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr, []);
         // 11.72 KB
         // pass shared array into GetSuffixTemplateStrings: 0 KB
         var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings[0]);
         // 11.72 KB (+0 KB)
         // pass shared array into GetSuffixTemplateStrings: 0 KB (+0 KB)
         //long startMemory = GC.GetTotalMemory(false);
-        var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
+        var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings, []);
         // 92.19 (+80.47 KB)
         // pass shared array into GetSuffixTemplateStrings: 82.81 KB (+82.81 KB)
         // don't create new array in GetSuffixes: 77.34 KB (+77.34 KB)
@@ -66,23 +66,29 @@ public class Conjugator : IConjugator
     {
         ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
+        var steps = new List<string>();
+
         if (conjugationParams.Honorific)
         {
             var honorificStem = HangulUtil.GetSpecialHonorificForm(verbStem);
             verbStem = honorificStem ?? verbStem;
+            if (honorificStem is not null)
+            {
+                steps.Add($"Use honorific form: {honorificStem}");
+            }
         }
 
-        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr);
+        var suffixTemplateStrings = templateListProvider.GetSuffixTemplateStrings(verbStem, conjugationParams, arr, steps);
         var sanitizedVerbStem = ApplyVerbStemEdgeCaseLogic(verbStem, suffixTemplateStrings[0]);
-        var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings);
-        var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes[0][0]);
+        var suffixes = GetSuffixes(sanitizedVerbStem, suffixTemplateStrings, steps);
+        var mutableVerbStem = ApplyIrregularVerbRules(sanitizedVerbStem, suffixes[0][0], steps);
         var conjugatedForm = MergeSyllablesFromLeftToRight(mutableVerbStem, suffixes);
         var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm.Value, conjugationParams.Honorific);
 
         return new ConjugationResult(finalForm, []);
     }
 
-    private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)
+    private Span<string> GetSuffixes(string verbStem, Span<string> suffixTemplateStrings, List<string> steps)
     {
         var suffixes = suffixTemplateStrings;
         suffixes[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
@@ -100,7 +106,7 @@ public class Conjugator : IConjugator
         return suffixes;
     }
 
-    private static MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix)
+    private static MutableVerbStem ApplyIrregularVerbRules(string verbStem, char firstSyllableOfFirstSuffix, List<string> steps)
     {
         bool hasHiddenBadchim = false;
         //var sb = new StringBuilder(verbStem);
@@ -119,6 +125,9 @@ public class Conjugator : IConjugator
                     int indexOfCharToReplace = verbStem.Length - 2;
                     char newSyllable = HangulUtil.SetFinal(verbStem[indexOfCharToReplace], 'ᆯ');
                     sb[indexOfCharToReplace] = newSyllable;
+                    // Because last syllable of verb stem is 르, and the first syllable of the first suffix is 아/어/았/었:
+                    //steps.Add($"Add ㄹ to syllable preceding 르: {sb}");
+                    // 르 irrgular: 모르 -> 몰르
                 }
             }
             else if (HangulUtil.BeginsWithVowel(firstSyllableOfFirstSuffix))
@@ -243,10 +252,19 @@ public class Conjugator : IConjugator
 
     private static string ApplyConjugatedFormEdgeCaseLogic(StringBuilder conjugatedForm, bool isHonorific)
     {
-        if (isHonorific && conjugatedForm[^2] == '셔' && conjugatedForm[^1] == '요')
+        if (!isHonorific)
         {
-            //conjugatedForm = conjugatedForm.Replace("셔요", "세요");
-            conjugatedForm[^2] = '세';
+            return conjugatedForm.ToString();
+        }
+
+        // Replace 셔요 with 세요.
+        for (int i = 0; i < conjugatedForm.Length - 1; i++)
+        {
+            if (conjugatedForm[i] == '셔' && conjugatedForm[i + 1] == '요')
+            {
+                conjugatedForm[i] = '세';
+                break;
+            }
         }
 
         return conjugatedForm.ToString();
@@ -295,7 +313,7 @@ public class Conjugator : IConjugator
         }
     }
 
-    private static MutableVerbStem MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
+    private static MutableVerbStem MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, Span<string> suffixes)
     {
         //var sb = new StringBuilder(verbStem.Value);
         //sb.Clear();

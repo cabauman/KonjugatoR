@@ -1,4 +1,6 @@
-﻿namespace KoreanConjugator;
+﻿using System.Text;
+
+namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a utility that provides a list of suffix templates required for conjugation.
@@ -62,19 +64,36 @@ public class ConjugationSuffixTemplateListProvider
     /// </summary>
     /// <param name="verbStem">The verb stem.</param>
     /// <param name="conjugationParams">The conjugation parameters.</param>
+    /// <param name="suffixes">A buffer of suffixes.</param>
     /// <returns>A list of suffix template strings.</returns>
     /// <exception cref="ArgumentException"><paramref name="verbStem"/> is null.</exception>
-    public string[] GetSuffixTemplateStrings(string verbStem, ConjugationParams conjugationParams, string[] suffixes)
+    public Span<string> GetSuffixTemplateStrings(string verbStem, ConjugationParams conjugationParams, string[] suffixes, List<string> steps)
     {
         ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
         var suffixTemplateStrings = ConvertParamsToSuffixes(conjugationParams, suffixes);
-        ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings);
+        //steps.Add($"Suffixes: {JoinStrings(" + ", suffixTemplateStrings)}");
+        ApplyCopulaLogic(verbStem, conjugationParams, suffixTemplateStrings, steps);
 
         return suffixTemplateStrings;
     }
 
-    private static string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams, string[] suffixes)
+    private static string JoinStrings(string separator, Span<string> suffixes)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < suffixes.Length; i++)
+        {
+            sb.Append(suffixes[i]);
+            if (i < suffixes.Length - 1)
+            {
+                sb.Append(separator);
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private static Span<string> ConvertParamsToSuffixes(ConjugationParams conjugationParams, string[] suffixes)
     {
         int i = 0;
         if (conjugationParams.Honorific)
@@ -98,17 +117,25 @@ public class ConjugationSuffixTemplateListProvider
         var end = Map[key];
         if (end.Length > 0)
         {
-            suffixes[i] = end;
+            suffixes[i++] = end;
         }
 
-        return suffixes;
+        return suffixes.AsSpan()[..i];
     }
 
-    private static void ApplyCopulaLogic(string verbStem, ConjugationParams conjugationParams, string[] suffixTemplateStrings)
+    private static void ApplyCopulaLogic(
+        string verbStem,
+        ConjugationParams conjugationParams,
+        Span<string> suffixTemplateStrings,
+        List<string> steps)
     {
+        if (HangulUtil.RegularIdaVerbs is null)
+        {
+            throw new InvalidOperationException("RegularIdaVerbs is null.");
+        }
+
         if (conjugationParams.Tense == Tense.Present &&
             !conjugationParams.Honorific &&
-            HangulUtil.RegularIdaVerbs != null &&
             !HangulUtil.RegularIdaVerbs.Contains(verbStem) &&
             (verbStem.EndsWith('이') || verbStem.Equals("아니")))
         {
