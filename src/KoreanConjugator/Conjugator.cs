@@ -248,10 +248,19 @@ public class Conjugator : IConjugator
 
     private static string ApplyConjugatedFormEdgeCaseLogic(StringBuilder conjugatedForm, bool isHonorific)
     {
-        if (isHonorific && conjugatedForm[^2] == '셔' && conjugatedForm[^1] == '요')
+        if (!isHonorific)
         {
-            //conjugatedForm = conjugatedForm.Replace("셔요", "세요");
-            conjugatedForm[^2] = '세';
+            return conjugatedForm.ToString();
+        }
+
+        // Replace 셔요 with 세요.
+        for (int i = 0; i < conjugatedForm.Length - 1; i++)
+        {
+            if (conjugatedForm[i] == '셔' && conjugatedForm[i + 1] == '요')
+            {
+                conjugatedForm[i] = '세';
+                break;
+            }
         }
 
         return conjugatedForm.ToString();
