@@ -66,6 +66,11 @@ public class Conjugator : IConjugator
     {
         ArgumentException.ThrowIfNullOrEmpty(verbStem);
 
+        if (verbStem.EndsWith('다'))
+        {
+            verbStem = verbStem[..^1];
+        }
+
         if (conjugationParams.Honorific)
         {
             var honorificStem = HangulUtil.GetSpecialHonorificForm(verbStem);
