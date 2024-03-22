@@ -87,7 +87,7 @@ public class Conjugator : IConjugator
         return new ConjugationResult(finalForm, []);
     }
 
-    private string[] GetSuffixes(string verbStem, string[] suffixTemplateStrings)
+    private Span<string> GetSuffixes(string verbStem, Span<string> suffixTemplateStrings)
     {
         var suffixes = suffixTemplateStrings;
         suffixes[0] = GetSuffix(verbStem, suffixTemplateStrings[0]);
@@ -309,7 +309,7 @@ public class Conjugator : IConjugator
         }
     }
 
-    private static MutableVerbStem MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, string[] suffixes)
+    private static MutableVerbStem MergeSyllablesFromLeftToRight(MutableVerbStem verbStem, Span<string> suffixes)
     {
         //var sb = new StringBuilder(verbStem.Value);
         //sb.Clear();
