@@ -110,7 +110,6 @@ public class ConjugationSuffixTemplateListProvider
     {
         if (conjugationParams.Tense == Tense.Present &&
             !conjugationParams.Honorific &&
-            HangulUtil.RegularIdaVerbs != null &&
             !HangulUtil.RegularIdaVerbs.Contains(verbStem) &&
             (verbStem.EndsWith('이') || verbStem.Equals("아니")))
         {
