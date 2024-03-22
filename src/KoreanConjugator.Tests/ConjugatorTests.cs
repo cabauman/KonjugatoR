@@ -698,11 +698,11 @@ public class ConjugatorTests
 
     [Theory]
     [InlineData("먹", true, "드십시오")]
-    [InlineData("먹", false, "먹습시오")]
+    [InlineData("먹", false, "먹으십시오")]
     [InlineData("가", true, "가십시오")]
-    [InlineData("가", false, "갑시오")]
+    [InlineData("가", false, "가십시오")]
     [InlineData("읽", true, "읽으십시오")]
-    [InlineData("읽", false, "읽습시오")]
+    [InlineData("읽", false, "읽으십시오")]
     public void Should_ConjugateToPresentFormalHighImperative(string stem, bool honorific, string expected)
     {
         var sut = new Conjugator(new SuffixTemplateParser());

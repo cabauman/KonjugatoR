@@ -24,7 +24,7 @@ public class ConjugationSuffixTemplateListProvider
         { (Tense.Past,      Formality.InformalLow,      ClauseType.Interrogative),    "어?" },
         { (Tense.Past,      Formality.InformalLow,      ClauseType.Propositive),      "" },
         { (Tense.Present,   Formality.FormalHigh,       ClauseType.Declarative),      "(ㅂ/습)니다" },
-        { (Tense.Present,   Formality.FormalHigh,       ClauseType.Imperative),       "(ㅂ/습)시오" },
+        { (Tense.Present,   Formality.FormalHigh,       ClauseType.Imperative),       "(으)십시오" },
         { (Tense.Present,   Formality.FormalHigh,       ClauseType.Interrogative),    "(ㅂ/습)니까?" },
         { (Tense.Present,   Formality.FormalHigh,       ClauseType.Propositive),      "(ㅂ/읍)시다" },
         { (Tense.Present,   Formality.FormalLow,        ClauseType.Declarative),      "(ㄴ/는)다" },
@@ -77,7 +77,9 @@ public class ConjugationSuffixTemplateListProvider
     private static string[] ConvertParamsToSuffixes(ConjugationParams conjugationParams, string[] suffixes)
     {
         int i = 0;
-        if (conjugationParams.Honorific)
+        if (conjugationParams.Honorific &&
+            !(conjugationParams.ClauseType is ClauseType.Imperative &&
+            conjugationParams.Formality is Formality.FormalHigh))
         {
             suffixes[i++] = "(으)시";
         }
