@@ -51,7 +51,10 @@ public class ConjugatorTests
     [InlineData("폭력적이", true, "폭력적이셔")]
     [InlineData("모이", false, "모여")]
     [InlineData("모이", true, "모이셔")]
-    //[InlineData("모이", true, "모여요")]
+    [InlineData("예쁘", false, "예뻐")]
+    [InlineData("따르", false, "따라")]
+    [InlineData("치르", false, "치러")]
+    [InlineData("들르", false, "들러")]
     public void Should_ConjugateToPresentInformalLowDeclarative(string stem, bool honorific, string expected)
     {
         var sut = new Conjugator(new SuffixTemplateParser());
@@ -811,5 +814,55 @@ public class ConjugatorTests
 
         var result = sut.Conjugate(stem, conjugationParams);
         Assert.Equal(expected, result.Value);
+    }
+
+    // ------------------------------------------------------------
+
+    [Theory]
+    [InlineData("읽", false)]
+    public void Should_ConjugateCorrectlyWhenCalledMoreThanOnce(string stem, bool honorific)
+    {
+        var sut = new Conjugator(new SuffixTemplateParser());
+
+        var conjugationParams = new ConjugationParams()
+        {
+            ClauseType = ClauseType.Declarative,
+            Formality = Formality.FormalLow,
+            Honorific = honorific,
+            Tense = Tense.Past,
+            WordClass = WordClass.Verb,
+        };
+
+        var result = sut.Conjugate(stem, conjugationParams);
+        Assert.Equal("읽었다", result.Value);
+
+        conjugationParams = new ConjugationParams()
+        {
+            ClauseType = ClauseType.Declarative,
+            Formality = Formality.FormalLow,
+            Honorific = honorific,
+            Tense = Tense.Present,
+            WordClass = WordClass.Verb,
+        };
+        result = sut.Conjugate(stem, conjugationParams);
+        Assert.Equal("읽는다", result.Value);
+    }
+
+    [Fact]
+    public void Should_ConjugateCorrectlyWhenVerbHasDaSuffix()
+    {
+        var sut = new Conjugator(new SuffixTemplateParser());
+
+        var conjugationParams = new ConjugationParams()
+        {
+            ClauseType = ClauseType.Declarative,
+            Formality = Formality.InformalHigh,
+            Honorific = false,
+            Tense = Tense.Present,
+            WordClass = WordClass.Verb,
+        };
+
+        var result = sut.Conjugate("먹다", conjugationParams);
+        Assert.Equal("먹어요", result.Value);
     }
 }
