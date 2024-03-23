@@ -339,9 +339,14 @@ public class Conjugator : IConjugator
 
     private string GetSuffix(string precedingText, string suffixTemplateString)
     {
-        var suffixTemplate = suffixTemplateParser.Parse(suffixTemplateString);
-        var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
+        //var suffixTemplate = suffixTemplateParser.Parse(suffixTemplateString);
+        //var suffixVariant = suffixTemplate.ChooseSuffixVariant(precedingText);
 
-        return suffixVariant;
+        if (suffixTemplateString.Contains("(아/어)") || suffixTemplateString.Contains("(았/었)"))
+        {
+            return SuffixTemplateParser2.ParseAEu(precedingText, suffixTemplateString);
+        }
+
+        return SuffixTemplateParser2.ParseBadchimDependent(precedingText, suffixTemplateString);
     }
 }

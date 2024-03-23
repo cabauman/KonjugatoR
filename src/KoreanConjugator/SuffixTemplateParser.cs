@@ -36,10 +36,75 @@ public class SuffixTemplateParser : ISuffixTemplateParser
 
         if (templateText.Contains("(아/어)") || templateText.Contains("(았/었)"))
         {
-            return new AEuSuffixTemplate(templateText, staticText.ToString(), badchimlessConnector[0] == '았');
+            return default; // new AEuSuffixTemplate(templateText, staticText.ToString(), badchimlessConnector[0] == '았');
         }
 
-        return new BadchimDependentSuffixTemplate(templateText, wordClass.ToString(), badchimConnector.ToString(), badchimlessConnector.ToString(), staticText.ToString());
+        return default; // new BadchimDependentSuffixTemplate(templateText, wordClass.ToString(), badchimConnector.ToString(), badchimlessConnector.ToString(), staticText.ToString());
+    }
+
+    public static AEuSuffixTemplate ParseAEu(string templateText)
+    {
+        var s = templateText.AsSpan();
+        ReadOnlySpan<char> wordClass = default;
+        ReadOnlySpan<char> badchimConnector = default;
+        ReadOnlySpan<char> badchimlessConnector = default;
+        ReadOnlySpan<char> staticText = default;
+
+        if (TryParseWordClass(s, out var length, out var nextStartIndex))
+        {
+            wordClass = s[..length];
+        }
+        if (TryParseDynamicText(s, nextStartIndex, out var badchimlessConnectorIndex, out var badchimConnectorIndex, out nextStartIndex))
+        {
+            if (badchimlessConnectorIndex > 0)
+            {
+                badchimlessConnector = s.Slice(badchimlessConnectorIndex, 1);
+            }
+            badchimConnector = s.Slice(badchimConnectorIndex, 1);
+        }
+        if (nextStartIndex < s.Length)
+        {
+            // TODO: Make sure remaining text is valid (Korean syllables).
+            staticText = s[nextStartIndex..];
+        }
+
+        return new AEuSuffixTemplate(templateText, staticText.ToString(), badchimlessConnector[0] == '았');
+    }
+
+    public static BadchimDependentSuffixTemplate ParseBadchimDependent(string templateText)
+    {
+        var s = templateText.AsSpan();
+        ReadOnlySpan<char> wordClass = default;
+        ReadOnlySpan<char> badchimConnector = default;
+        ReadOnlySpan<char> badchimlessConnector = default;
+        ReadOnlySpan<char> staticText = default;
+
+        if (TryParseWordClass(s, out var length, out var nextStartIndex))
+        {
+            wordClass = s[..length];
+        }
+        if (TryParseDynamicText(s, nextStartIndex, out var badchimlessConnectorIndex, out var badchimConnectorIndex, out nextStartIndex))
+        {
+            if (badchimlessConnectorIndex > 0)
+            {
+                badchimlessConnector = s.Slice(badchimlessConnectorIndex, 1);
+            }
+            badchimConnector = s.Slice(badchimConnectorIndex, 1);
+        }
+        if (nextStartIndex < s.Length)
+        {
+            // TODO: Make sure remaining text is valid (Korean syllables).
+            staticText = s[nextStartIndex..];
+        }
+
+        return new BadchimDependentSuffixTemplate
+        {
+            TemplateText = templateText,
+            WordClass = wordClass.ToString(),
+            BadchimConnector = badchimConnector.ToString(),
+            BadchimlessConnector = badchimlessConnector.ToString(),
+            StaticText = staticText.ToString(),
+        };
     }
 
     private static bool TryParseWordClass(ReadOnlySpan<char> s, out int length, out int nextStartIndex)
