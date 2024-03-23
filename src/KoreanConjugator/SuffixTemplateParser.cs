@@ -7,77 +7,109 @@ namespace KoreanConjugator;
 /// </summary>
 public class SuffixTemplateParser : ISuffixTemplateParser
 {
-    private static readonly Regex aEuaRegex = CreateAEuRegex();
-    private static readonly Regex badchimDependentRegex = CreateBadchimDependentRegex();
-
     /// <inheritdoc/>
     public SuffixTemplate Parse(string templateText)
     {
-        // V/A + [ㄹ/을] 거
+        var s = templateText.AsSpan();
+        ReadOnlySpan<char> wordClass = default;
+        ReadOnlySpan<char> badchimConnector = default;
+        ReadOnlySpan<char> badchimlessConnector = default;
+        ReadOnlySpan<char> staticText = default;
+
+        if (TryParseWordClass(s, out var length, out var nextStartIndex))
+        {
+            wordClass = s[..length];
+        }
+        if (TryParseDynamicText(s, nextStartIndex, out var badchimlessConnectorIndex, out var badchimConnectorIndex, out nextStartIndex))
+        {
+            if (badchimlessConnectorIndex > 0)
+            {
+                badchimlessConnector = s.Slice(badchimlessConnectorIndex, 1);
+            }
+            badchimConnector = s.Slice(badchimConnectorIndex, 1);
+        }
+        if (nextStartIndex < s.Length)
+        {
+            // TODO: Make sure remaining text is valid (Korean syllables).
+            staticText = s[nextStartIndex..];
+        }
+
         if (templateText.Contains("(아/어)") || templateText.Contains("(았/었)"))
         {
-            return ParseAEuTemplate(templateText);
+            return new AEuSuffixTemplate(templateText, staticText.ToString(), badchimlessConnector[0] == '았');
         }
 
-        var match = badchimDependentRegex.Match(templateText);
-        if (!match.Success)
+        return new BadchimDependentSuffixTemplate(templateText, wordClass.ToString(), badchimConnector.ToString(), badchimlessConnector.ToString(), staticText.ToString());
+    }
+
+    private static bool TryParseWordClass(ReadOnlySpan<char> s, out int length, out int nextStartIndex)
+    {
+        // MemoryExtensions.Equals(s[..6], "A/V + ", StringComparison.OrdinalIgnoreCase)
+        if (s.Length >= 6 && s[..6] is "A/V + ")
         {
-            throw new ArgumentException("Suffix doesn't match the template format.");
+            length = 3;
+            nextStartIndex = 6;
+            return true;
         }
-
-        var wordClassResult = match.Groups["WordClass"].Value;
-        var badchimlessConnector = match.Groups["NoBadchim"].Value;
-        var badchimConnector = match.Groups["Badchim"].Value;
-        var staticText = match.Groups["StaticText"].Value;
-
-        var template = new BadchimDependentSuffixTemplate(templateText, wordClassResult, badchimConnector, badchimlessConnector, staticText);
-
-        return template;
-    }
-
-    private static AEuSuffixTemplate ParseAEuTemplate(string templateText)
-    {
-        var match = aEuaRegex.Match(templateText);
-        if (!match.Success)
+        if (s.Length >= 4 && s[..4] is "A + " or "V + ")
         {
-            throw new ArgumentException("Suffix doesn't match the template format.");
+            length = 1;
+            nextStartIndex = 4;
+            return true;
+        }
+        length = 0;
+        nextStartIndex = 0;
+        return false;
+    }
+
+    private static bool TryParseDynamicText(
+        ReadOnlySpan<char> s,
+        int start,
+        out int badchimlessConnectorIndex,
+        out int badchimConnectorIndex,
+        out int nextStartIndex)
+    {
+        var index = nextStartIndex = start;
+        badchimlessConnectorIndex = -1;
+        badchimConnectorIndex = -1;
+
+        if (s[index] != '(')
+        {
+            return false;
+        }
+        index += 1;
+        if (!HangulUtil.IsSyllable(s[index]) && !HangulUtil.IsModernCompatibilityLetter(s[index]))
+        {
+            // TODO: Be more strict (ㅂ|ㄹ|ㄴ|ㅁ|가-힣)
+            return false;
+        }
+        index += 1;
+        if (s[index] == ')')
+        {
+            nextStartIndex = index + 1;
+            badchimConnectorIndex = index - 1;
+            return true;
+        }
+        if (s[index] != '/')
+        {
+            return false;
+        }
+        index += 1;
+        if (!HangulUtil.IsSyllable(s[index]))
+        {
+            return false;
+        }
+        index += 1;
+        if (s[index] != ')')
+        {
+            return false;
         }
 
-        // TODO: Either use or get rid of these assignments.
-        var wordClassResult = match.Groups["WordClass"].Value;
-        var aResult = match.Groups["AGroup"].Value;
-        var euResult = match.Groups["EuGroup"].Value;
-        var staticTextResult = match.Groups["StaticText"].Value;
-
-        var pastTense = aResult.Equals("았");
-        return new AEuSuffixTemplate(templateText, staticTextResult, pastTense);
-    }
-
-    private static Regex CreateAEuRegex()
-    {
-        string wordClassGroup = "(?<WordClass>A/V|A|V)";
-        string optionalWordClassGroup = $"(?:{wordClassGroup} \\+ )?";
-        string staticTextGroup = "(?<StaticText>.*)";
-        string aGroup = "(?<AGroup>[아|았])";
-        string euGroup = "(?<EuGroup>[어|었])";
-        string aEuGroup = $"\\({aGroup}/{euGroup}\\)";
-        string pattern = $"{optionalWordClassGroup}{aEuGroup}{staticTextGroup}";
-
-        return new(pattern, RegexOptions.Compiled);
-    }
-
-    private static Regex CreateBadchimDependentRegex()
-    {
-        string wordClassGroup = "(?<WordClass>A/V|A|V)";
-        string optionalWordClassGroup = $"(?:{wordClassGroup} \\+ )?";
-        string staticTextGroup = "(?<StaticText>.*)";
-        string noBadchim = "(?<NoBadchim>[ㅂ|ㄹ|ㄴ|ㅁ|가-힣])";
-        string badchim = "(?<Badchim>[가-힣])";
-        string optionalNoBadchim = $"(?:{noBadchim}/)?";
-        string badchimNoBadchim = $"\\({optionalNoBadchim}{badchim}\\)";
-        string optionalBadchimNoBadchim = $"(?:{badchimNoBadchim})?";
-        string pattern = $"{optionalWordClassGroup}{optionalBadchimNoBadchim}{staticTextGroup}";
-
-        return new(pattern, RegexOptions.Compiled);
+        // 012345
+        // (A/B)
+        nextStartIndex = index + 1;
+        badchimConnectorIndex = index - 1;
+        badchimlessConnectorIndex = index - 3;
+        return true;
     }
 }
