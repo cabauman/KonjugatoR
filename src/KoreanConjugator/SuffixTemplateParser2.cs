@@ -45,11 +45,10 @@ public class SuffixTemplateParser2
     {
         BadchimDependentSuffixTemplate suffixTemplate = SuffixTemplateParser.ParseBadchimDependent(templateText);
 
-        string connector = string.Empty;
+        ReadOnlySpan<char> connector = string.Empty;
         if (suffixTemplate.BadchimConnector == string.Empty)
         {
-            // Doesn't depend on a badchim
-            // No modifications
+            // Doesn't depend on a badchim. No modifications.
         }
         else
         {

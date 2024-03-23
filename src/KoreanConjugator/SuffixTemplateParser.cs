@@ -68,7 +68,12 @@ public class SuffixTemplateParser : ISuffixTemplateParser
             staticText = s[nextStartIndex..];
         }
 
-        return new AEuSuffixTemplate(templateText, staticText.ToString(), badchimlessConnector[0] == '았');
+        return new AEuSuffixTemplate
+        {
+            TemplateText = templateText,
+            StaticText = staticText,
+            IsPastTense = badchimlessConnector[0] == '았'
+        };
     }
 
     public static BadchimDependentSuffixTemplate ParseBadchimDependent(string templateText)
@@ -100,10 +105,10 @@ public class SuffixTemplateParser : ISuffixTemplateParser
         return new BadchimDependentSuffixTemplate
         {
             TemplateText = templateText,
-            WordClass = wordClass.ToString(),
-            BadchimConnector = badchimConnector.ToString(),
-            BadchimlessConnector = badchimlessConnector.ToString(),
-            StaticText = staticText.ToString(),
+            WordClass = wordClass,
+            BadchimConnector = badchimConnector,
+            BadchimlessConnector = badchimlessConnector,
+            StaticText = staticText,
         };
     }
 

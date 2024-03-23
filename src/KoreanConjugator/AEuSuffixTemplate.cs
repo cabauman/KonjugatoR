@@ -6,19 +6,17 @@
 public readonly ref struct AEuSuffixTemplate
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="AEuSuffixTemplate"/> class.
+    /// Gets the template text.
     /// </summary>
-    /// <param name="templateText">The template text.</param>
-    /// <param name="staticText">The portion of the template text that doesn't change.</param>
-    /// <param name="isPastTense">A value indicating whether the suffix should be past tense.</param>
-    public AEuSuffixTemplate(string templateText, string staticText, bool isPastTense)
-    {
-        TemplateText = templateText;
-        StaticText = staticText;
-        IsPastTense = isPastTense;
-    }
-
     public string TemplateText { get; init; }
-    public string StaticText { get; init; }
+
+    /// <summary>
+    /// Gets the portion of the template text that doesn't change.
+    /// </summary>
+    public ReadOnlySpan<char> StaticText { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the suffix should be past tense.
+    /// </summary>
     public bool IsPastTense { get; init; }
 }

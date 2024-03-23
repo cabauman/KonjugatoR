@@ -55,7 +55,7 @@ public class Conjugator : IConjugator
         // 121.88 KB (+13.29 KB)
         // shared StringBuilder: 101.56 KB (+3.12 KB)
         // MutableVerbStem to struct and avoid sb.ToString too early: 92.19 KB (+0 KB)
-        //var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm, conjugationParams.Honorific);
+        //var finalForm = ApplyConjugatedFormEdgeCaseLogic(conjugatedForm.Value, conjugationParams.Honorific);
         // MutableVerbStem to struct and avoid sb.ToString too early: 95.31 KB (+3.12 KB)
 
         return "";
