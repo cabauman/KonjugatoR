@@ -8,10 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="CoverageResults\**" />
+    <Compile Remove="Data\**" />
     <Compile Remove="TestResults\**" />
     <EmbeddedResource Remove="CoverageResults\**" />
+    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="TestResults\**" />
     <None Remove="CoverageResults\**" />
+    <None Remove="Data\**" />
     <None Remove="TestResults\**" />
   </ItemGroup>
 
@@ -36,10 +39,6 @@
     <Content Include="../KoreanConjugator/Data/BothRegularAndIrregular.txt" Link="Data/BothRegularAndIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../KoreanConjugator/Data/RegularsThatLookIrregular.txt" Link="Data/RegularsThatLookIrregular.txt" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../KoreanConjugator/Data/RegularIdaVerbs.txt" Link="Data/RegularIdaVerbs.txt" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

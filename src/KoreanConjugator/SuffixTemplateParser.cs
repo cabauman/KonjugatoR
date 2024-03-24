@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace KoreanConjugator;
+﻿namespace KoreanConjugator;
 
 /// <summary>
 /// Represents a suffix template parser.
@@ -8,40 +6,16 @@ namespace KoreanConjugator;
 public class SuffixTemplateParser : ISuffixTemplateParser
 {
     /// <inheritdoc/>
-    public SuffixTemplate Parse(string templateText)
+    public ProcessedSuffix Parse(string templateText)
     {
-        var s = templateText.AsSpan();
-        ReadOnlySpan<char> wordClass = default;
-        ReadOnlySpan<char> badchimConnector = default;
-        ReadOnlySpan<char> badchimlessConnector = default;
-        ReadOnlySpan<char> staticText = default;
-
-        if (TryParseWordClass(s, out var length, out var nextStartIndex))
-        {
-            wordClass = s[..length];
-        }
-        if (TryParseDynamicText(s, nextStartIndex, out var badchimlessConnectorIndex, out var badchimConnectorIndex, out nextStartIndex))
-        {
-            if (badchimlessConnectorIndex > 0)
-            {
-                badchimlessConnector = s.Slice(badchimlessConnectorIndex, 1);
-            }
-            badchimConnector = s.Slice(badchimConnectorIndex, 1);
-        }
-        if (nextStartIndex < s.Length)
-        {
-            // TODO: Make sure remaining text is valid (Korean syllables).
-            staticText = s[nextStartIndex..];
-        }
-
-        if (templateText.Contains("(아/어)") || templateText.Contains("(았/었)"))
-        {
-            return default; // new AEuSuffixTemplate(templateText, staticText.ToString(), badchimlessConnector[0] == '았');
-        }
-
-        return default; // new BadchimDependentSuffixTemplate(templateText, wordClass.ToString(), badchimConnector.ToString(), badchimlessConnector.ToString(), staticText.ToString());
+        return default;
     }
 
+    /// <summary>
+    /// Returns a suffix template object by parsing the template text.
+    /// </summary>
+    /// <param name="templateText">The template text.</param>
+    /// <returns>The suffix template object.</returns>
     public static AEuSuffixTemplate ParseAEu(string templateText)
     {
         var s = templateText.AsSpan();
@@ -76,6 +50,11 @@ public class SuffixTemplateParser : ISuffixTemplateParser
         };
     }
 
+    /// <summary>
+    /// Returns a suffix template object by parsing the template text.
+    /// </summary>
+    /// <param name="templateText">The template text.</param>
+    /// <returns>The suffix template object.</returns>
     public static BadchimDependentSuffixTemplate ParseBadchimDependent(string templateText)
     {
         var s = templateText.AsSpan();

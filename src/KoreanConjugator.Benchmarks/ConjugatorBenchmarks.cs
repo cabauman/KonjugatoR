@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using System.Text;
 
 namespace KoreanConjugator.Benchmarks;
 
@@ -6,7 +7,7 @@ namespace KoreanConjugator.Benchmarks;
 [SimpleJob(launchCount: 1, warmupCount: 1, iterationCount: 10)]
 public class ConjugatorBenchmarks
 {
-    private static readonly int Iterations = 100;
+    private static readonly int Iterations = 1;
     private readonly Conjugator _conjugator = new(new SuffixTemplateParser());
     private readonly string _stem = "기다리";
     private readonly ConjugationResult[] _results = new ConjugationResult[Iterations];
@@ -20,7 +21,7 @@ public class ConjugatorBenchmarks
         WordClass = WordClass.Verb,
     };
 
-    //[Benchmark]
+    [Benchmark]
     public ConjugationResult[] Conjugate()
     {
         for (int i = 0; i < Iterations; i++)
@@ -30,13 +31,13 @@ public class ConjugatorBenchmarks
         return _results;
     }
 
-    [Benchmark]
-    public string[] MemoryTest()
-    {
-        for (int i = 0; i < Iterations; i++)
-        {
-            _results2[i] = _conjugator.MemoryTest(_stem, _conjugationParams);
-        }
-        return _results2;
-    }
+    //[Benchmark]
+    //public string[] MemoryTest()
+    //{
+    //    for (int i = 0; i < Iterations; i++)
+    //    {
+    //        _results2[i] = _conjugator.Conjugate2(_stem, _conjugationParams);
+    //    }
+    //    return _results2;
+    //}
 }

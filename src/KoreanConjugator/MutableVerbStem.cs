@@ -5,26 +5,20 @@ namespace KoreanConjugator;
 /// <summary>
 /// Represents a mutable verb stem.
 /// </summary>
-public readonly ref struct MutableVerbStem
+public ref struct MutableVerbStem
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MutableVerbStem"/> class.
+    /// Gets the core verb stem.
     /// </summary>
-    /// <param name="value">The verb stem.</param>
-    /// <param name="hasHiddenBadchim">A value indicating whether the verb stem has a hidden badchim.</param>
-    public MutableVerbStem(StringBuilder value, bool hasHiddenBadchim)
-    {
-        Value = value;
-        HasHiddenBadchim = hasHiddenBadchim;
-    }
+    public string Stem { get; set; }
 
     /// <summary>
-    /// Gets the verb stem.
+    /// Gets the string builder used to build the conjugated form.
     /// </summary>
-    public StringBuilder Value { get; }
+    public StringBuilder Builder { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether the verb stem has a hidden badchim.
     /// </summary>
-    public bool HasHiddenBadchim { get; }
+    public bool HasHiddenBadchim { get; set; }
 }

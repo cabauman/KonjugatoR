@@ -10,5 +10,5 @@ public interface ISuffixTemplateParser
     /// </summary>
     /// <param name="templateText">The template text.</param>
     /// <returns>A suffix template object.</returns>
-    SuffixTemplate Parse(string templateText);
+    ProcessedSuffix Parse(string templateText);
 }
